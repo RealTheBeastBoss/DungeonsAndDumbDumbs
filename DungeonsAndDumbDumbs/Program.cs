@@ -318,6 +318,33 @@ namespace DungeonsAndDumbDumbs
             }
         }
 
+        public static int GetAbilityModifier(string abilityName)
+        {
+            int abilityScore = 1;
+            switch (abilityName)
+            {
+                case "Strength":
+                    abilityScore = playerStrength;
+                    break;
+                case "Dexterity":
+                    abilityScore = playerDexterity;
+                    break;
+                case "Constitution":
+                    abilityScore = playerConstitution;
+                    break;
+                case "Intelligence":
+                    abilityScore = playerIntelligence;
+                    break;
+                case "Wisdom":
+                    abilityScore = playerWisdom;
+                    break;
+                case "Charisma":
+                    abilityScore = playerCharisma;
+                    break;
+            }
+            return Convert.ToInt32(Math.Floor(Convert.ToDouble((abilityScore - 10) / 2)));
+        }
+
         public static List<int> RollDice(bool displayValues, params Tuple<int, int>[] diceSets)
         {
             List<int> diceValues = new List<int>();

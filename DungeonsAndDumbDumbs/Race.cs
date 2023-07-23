@@ -7,6 +7,7 @@ namespace DungeonsAndDumbDumbs
     {
         public string raceName;
         public string infoText;
+        public int travelSpeed;
         public bool hasDarkvision = false;
         public List<Program.Language> languages = new List<Program.Language>();
         public virtual void PlayerCreation()
@@ -45,6 +46,7 @@ namespace DungeonsAndDumbDumbs
         public Dragonborn()
         {
             raceName = "Dragonborn";
+            travelSpeed = 30;
             infoText = "Your draconic ancestry gives you a specific damage resistance and means you have the\nability to breath an elemental power.";
             languages.Add(Program.Language.COMMON);
             languages.Add(Program.Language.DRACONIC);
@@ -84,6 +86,7 @@ namespace DungeonsAndDumbDumbs
         public HillDwarf()
         {
             raceName = "Hill Dwarf";
+            travelSpeed = 25;
             infoText = "As you spend long stretches of time in dark places, you have naturally good vision in the dark.\n" +
             "You are particularly resistant to poison, as well as a proficiency with some axes, hammers and tools. \nYou are also naturally tough and are good at working with stone.";
             hasDarkvision = true;
@@ -122,6 +125,7 @@ namespace DungeonsAndDumbDumbs
         public MountainDwarf()
         {
             raceName = "Mountain Dwarf";
+            travelSpeed = 25;
             infoText = "As you spend long stretches of time in dark places, you have naturally good vision in the dark.\n" +
             "You are particularly resistant to poison, as well as a proficiency with some axes, hammers and tools. \nYou are also good at working with stone and armour.";
             hasDarkvision = true;
@@ -162,6 +166,7 @@ namespace DungeonsAndDumbDumbs
         public HighElf()
         {
             raceName = "High Elf";
+            travelSpeed = 30;
             infoText = "As you typically live in forests of twilight, you can see well in the dark as well as being perceptive and intelligent.\n" +
             "As an elf, magic doesn't affect you as much as others. Your sleep is only 4 hours a day, rather than 8.\nElves are proficient with some swords and bows, as well as " +
             "being able to have a cantrip available.";
@@ -209,6 +214,7 @@ namespace DungeonsAndDumbDumbs
         public WoodElf()
         {
             raceName = "Wood Elf";
+            travelSpeed = 35;
             infoText = "As you typically live in forests of twilight, you can see well in the dark as well as being perceptive and wise.\n" +
             "As an elf, magic doesn't affect you as much as others. Your sleep is only 4 hours a day, rather than 8.\nElves are proficient with some swords and bows, as well as " +
             "being fast and are good at camoflague.";
@@ -227,6 +233,7 @@ namespace DungeonsAndDumbDumbs
         public RockGnome()
         {
             raceName = "Rock Gnome";
+            travelSpeed = 25;
             infoText = "As you spend long stretches of time in dark places, you have naturally good vision in the dark.\n" +
             "You are intelligent, wise, and well-versed with being attacked by magic as well as having a lot of knowledge\non the subject. Gnomes also have a great ability to create " +
             "clockwork devices using gold.";
@@ -241,6 +248,7 @@ namespace DungeonsAndDumbDumbs
         public HalfElf()
         {
             raceName = "Half-Elf";
+            travelSpeed = 30;
             infoText = "With a natural charisma, you can get your way around a couple of subjects you wouldn't otherwise know.\nThe elf in you " +
             "allows you to see well in the dark and are opposed to magic.";
             hasDarkvision = true;
@@ -323,6 +331,7 @@ namespace DungeonsAndDumbDumbs
         public HalfOrc()
         {
             raceName = "Half-Orc";
+            travelSpeed = 30;
             infoText = "As an Orc-kind, you can see well in the dark. You are also very intimidating and\nhave high endurance. You can savagely attack to " +
             "deal more damage.";
             hasDarkvision = true;
@@ -335,6 +344,7 @@ namespace DungeonsAndDumbDumbs
         public LightHalfling()
         {
             raceName = "Lightfoot Halfling";
+            travelSpeed = 25;
             infoText = "Lightfoot Halflings are naturally lucky, brave, nimble, and stealthy.";
             languages.Add(Program.Language.COMMON);
             languages.Add(Program.Language.HALFLING);
@@ -350,6 +360,7 @@ namespace DungeonsAndDumbDumbs
         public StoutHalfling()
         {
             raceName = "Stout Halfling";
+            travelSpeed = 25;
             infoText = "Stout Halflings are naturally lucky, brave, nimble, and resistant to poisons.";
             languages.Add(Program.Language.COMMON);
             languages.Add(Program.Language.HALFLING);
@@ -365,6 +376,7 @@ namespace DungeonsAndDumbDumbs
         public Human()
         {
             raceName = "Human";
+            travelSpeed = 30;
             infoText = "Humans are very well-rounded creatures and have capacity for languages.";
             languages.Add(Program.Language.COMMON);
         }
@@ -401,6 +413,7 @@ namespace DungeonsAndDumbDumbs
         public VariantHuman()
         {
             raceName = "Variant Human";
+            travelSpeed = 30;
             infoText = "This breed of human has more capacity for mastering a skill. Is good at close-combat with enemies.";
             languages.Add(Program.Language.COMMON);
         }
@@ -483,6 +496,10 @@ namespace DungeonsAndDumbDumbs
             hasDarkvision = true;
             languages.Add(Program.Language.COMMON);
             languages.Add(Program.Language.INFERNAL);
+        }
+        public override void PlayerCreation()
+        {
+            Program.playerCantrips.Add(Program.thaumaturgy);
         }
     }
 }

@@ -17,24 +17,24 @@ namespace DungeonsAndDumbDumbs
         {
 
         }
-        public virtual int CalculateHitDice()
+        public virtual Tuple<int, int> CalculateHitDice()
         {
-            return 8 * Program.playerLevel;
+            return new Tuple<int, int>(Program.playerLevel, 8);
         }
         public virtual int CalculateHitPoints()
         {
             if (Program.playerLevel == 1)
             {
-                return 8 + Program.playerConstitution;
+                return 8 + Program.GetAbilityModifier("Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
             }
         }
         public virtual int CalculateArmourClass()
         {
-            return 10 + Program.playerDexterity;
+            return 10 + Program.GetAbilityModifier("Dexterity");
         }
         public virtual void IncreaseLevel(int diceSize = 8)
         {
@@ -44,6 +44,8 @@ namespace DungeonsAndDumbDumbs
     class Barbarian : Class
     {
         public int timesRagedSinceRest = 0;
+        public int totalRagesPerRest = 2;
+        public int rageDamage = 2;
         public Barbarian()
         {
             className = "Barbarian";
@@ -90,23 +92,23 @@ namespace DungeonsAndDumbDumbs
             Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
             Console.ReadLine();
         }
-        public override int CalculateHitDice()
+        public override Tuple<int, int> CalculateHitDice()
         {
-            return 12 * Program.playerLevel;
+            return new Tuple<int, int>(Program.playerLevel, 12);
         }
         public override int CalculateHitPoints()
         {
             if (Program.playerLevel == 1)
             {
-                return 12 + Program.playerConstitution;
+                return 12 + Program.GetAbilityModifier("Constitution");
             } else
             {
-                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
             }
         }
         public override int CalculateArmourClass()
         {
-            return 10 + Program.playerConstitution + Program.playerDexterity; // TODO: Only when not wearing any armour
+            return 10 + Program.GetAbilityModifier("Constitution") + Program.GetAbilityModifier("Dexterity"); // TODO: Only when not wearing any armour
         }
     }
     class Bard : Class
@@ -459,19 +461,19 @@ namespace DungeonsAndDumbDumbs
             className = "Fighter";
             classDescription = "A master of martial combat, skilled with a variety of weapons and armor.";
         }
-        public override int CalculateHitDice()
+        public override Tuple<int, int> CalculateHitDice()
         {
-            return 10 * Program.playerLevel;
+            return new Tuple<int, int>(Program.playerLevel, 10);
         }
         public override int CalculateHitPoints()
         {
             if (Program.playerLevel == 1)
             {
-                return 10 + Program.playerConstitution;
+                return 10 + Program.GetAbilityModifier("Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
             }
         }
         public override void PlayerCreation()
@@ -548,7 +550,7 @@ namespace DungeonsAndDumbDumbs
         }
         public override int CalculateArmourClass()
         {
-            return 10 + Program.playerDexterity + Program.playerWisdom; // TODO: Only while not wearing armour or sheild
+            return 10 + Program.GetAbilityModifier("Dexterity") + Program.GetAbilityModifier("Wisdom"); // TODO: Only while not wearing armour or sheild
         }
         public override void PlayerCreation()
         {
@@ -625,19 +627,19 @@ namespace DungeonsAndDumbDumbs
             classDescription = "A holy warrior bound to a sacred oath.";
             primaryAbility = "Strength";
         }
-        public override int CalculateHitDice()
+        public override Tuple<int, int> CalculateHitDice()
         {
-            return 10 * Program.playerLevel;
+            return new Tuple<int, int>(Program.playerLevel, 10);
         }
         public override int CalculateHitPoints()
         {
             if (Program.playerLevel == 1)
             {
-                return 10 + Program.playerConstitution;
+                return 10 + Program.GetAbilityModifier("Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
             }
         }
         public override void PlayerCreation()
@@ -688,6 +690,61 @@ namespace DungeonsAndDumbDumbs
             className = "Ranger";
             classDescription = "A warrior who combats threats on the edges of civilization.";
             primaryAbility = "Dexterity";
+        }
+        public override Tuple<int, int> CalculateHitDice()
+        {
+            return new Tuple<int, int>(Program.playerLevel, 10);
+        }
+        public override int CalculateHitPoints()
+        {
+            if (Program.playerLevel == 1)
+            {
+                return 10 + Program.GetAbilityModifier("Constitution");
+            }
+            else
+            {
+                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
+            }
+        }
+        public override void PlayerCreation()
+        {
+            Program.AddProficiency("Light Armour");
+            Program.AddProficiency("Medium Armour");
+            Program.AddProficiency("Shields");
+            Program.AddProficiency("Simple Weapons");
+            Program.AddProficiency("Martial Weapons");
+            Program.AddProficiency("Strength");
+            Program.AddProficiency("Dexterity");
+            int selectedSkills = 0;
+            List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ANIMALS,  Program.Skill.ATHLETICS, Program.Skill.INSIGHT, Program.Skill.INVESTIGATION, Program.Skill.NATURE,
+                Program.Skill.PERCEPTION, Program.Skill.STEALTH, Program.Skill.SURVIVAL };
+            while (selectedSkills < 3)
+            {
+                Console.Clear();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    Console.WriteLine(Program.GetDescription(skill));
+                }
+                Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    {
+                        Program.AddProficiency(Program.GetDescription(skill));
+                        allowedSkills.Remove(skill);
+                        selectedSkills++;
+                        break;
+                    }
+                }
+            }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
         }
     }
     class Rogue : Class
