@@ -19,15 +19,22 @@ namespace DungeonsAndDumbDumbs
         }
         public virtual int CalculateHitDice()
         {
-            return 0;
+            return 8 * Program.playerLevel;
         }
         public virtual int CalculateHitPoints()
         {
-            return 0;
+            if (Program.playerLevel == 1)
+            {
+                return 8 + Program.playerConstitution;
+            }
+            else
+            {
+                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
+            }
         }
         public virtual int CalculateArmourClass()
         {
-            return 0;
+            return 10 + Program.playerDexterity;
         }
         public virtual void IncreaseLevel(int diceSize = 8)
         {
@@ -204,24 +211,6 @@ namespace DungeonsAndDumbDumbs
             Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
             Console.ReadLine();
         }
-        public override int CalculateHitDice()
-        {
-            return 8 * Program.playerLevel;
-        }
-        public override int CalculateHitPoints()
-        {
-            if (Program.playerLevel == 1)
-            {
-                return 8 + Program.playerConstitution;
-            } else
-            {
-                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
-            }
-        }
-        public override int CalculateArmourClass()
-        {
-            return 10 + Program.playerDexterity;
-        }
     }
     class Cleric : Class
     {
@@ -230,24 +219,6 @@ namespace DungeonsAndDumbDumbs
             className = "Cleric";
             classDescription = "A priestly champion who wields divine magic in service of a higher power.";
             primaryAbility = "Wisdom";
-        }
-        public override int CalculateHitDice()
-        {
-            return 8 * Program.playerLevel;
-        }
-        public override int CalculateHitPoints()
-        {
-            if (Program.playerLevel == 1)
-            {
-                return 8 + Program.playerConstitution;
-            } else
-            {
-                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
-            }
-        }
-        public override int CalculateArmourClass()
-        {
-            return 10 + Program.playerDexterity;
         }
         public override void PlayerCreation()
         {
@@ -339,6 +310,12 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
         }
     }
     class Druid : Class
@@ -348,25 +325,6 @@ namespace DungeonsAndDumbDumbs
             className = "Druid";
             classDescription = "A priest of the Old Faith, wielding the powers of nature and adopting animal forms.";
             primaryAbility = "Wisdom";
-        }
-        public override int CalculateHitDice()
-        {
-            return 8 * Program.playerLevel;
-        }
-        public override int CalculateHitPoints()
-        {
-            if (Program.playerLevel == 1)
-            {
-                return 8 + Program.playerConstitution;
-            }
-            else
-            {
-                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
-            }
-        }
-        public override int CalculateArmourClass()
-        {
-            return 10 + Program.playerDexterity;
         }
         public override void PlayerCreation()
         {
@@ -467,6 +425,12 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
         }
     }
     class Fighter : Class
@@ -509,10 +473,6 @@ namespace DungeonsAndDumbDumbs
             {
                 return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
             }
-        }
-        public override int CalculateArmourClass()
-        {
-            return 10 + Program.playerDexterity;
         }
         public override void PlayerCreation()
         {
@@ -570,6 +530,12 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
         }
     }
     class Monk : Class
@@ -580,14 +546,139 @@ namespace DungeonsAndDumbDumbs
             classDescription = "A master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection.";
             primaryAbility = "Dexterity";
         }
+        public override int CalculateArmourClass()
+        {
+            return 10 + Program.playerDexterity + Program.playerWisdom; // TODO: Only while not wearing armour or sheild
+        }
+        public override void PlayerCreation()
+        {
+            Program.AddProficiency("Simple Weapons");
+            Program.AddProficiency("Shortswords");
+            Program.AddProficiency("Strength");
+            Program.AddProficiency("Dexterity");
+            bool selectedArtisanTools = false;
+            List<string> artisanTools = new List<string>() { "Alchemist's Supplies", "Brewer's Supplies", "Caligrapher's Supplies", "Carpenter's Tools", "Cartographer's Tools", "Cobbler's Tools",
+                "Cook's Utensils", "Glassblower's Tools", "Jeweler's Tools", "Leatherworker's Tools", "Mason's Tools", "Painter's Supplies", "Potter's Tools", "Smith's Tools", "Tinker's Tools",
+                "Weaver's Tools", "Woodcarver's Tools" };
+            while (!selectedArtisanTools)
+            {
+                Console.Clear();
+                foreach (string toolSet in artisanTools)
+                {
+                    if (!Program.playerProficiencies.Contains(toolSet))
+                    {
+                        Console.WriteLine(toolSet);
+                    }
+                }
+                Console.Write("\nWhich tool set would you like to be proficient in?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (string toolSet in artisanTools)
+                {
+                    string shortForm = toolSet.Substring(0, toolSet.IndexOf('\''));
+                    if (!Program.playerProficiencies.Contains(toolSet) && (response == shortForm.ToLower() || response == toolSet.ToLower()))
+                    {
+                        Program.AddProficiency(toolSet);
+                        selectedArtisanTools = true;
+                        break;
+                    }
+                }
+            }
+            int selectedSkills = 0;
+            List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ACROBATICS, Program.Skill.ATHLETICS, Program.Skill.HISTORY, Program.Skill.INSIGHT,
+                Program.Skill.RELIGION, Program.Skill.STEALTH };
+            while (selectedSkills < 2)
+            {
+                Console.Clear();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    Console.WriteLine(Program.GetDescription(skill));
+                }
+                Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    {
+                        Program.AddProficiency(Program.GetDescription(skill));
+                        allowedSkills.Remove(skill);
+                        selectedSkills++;
+                        break;
+                    }
+                }
+            }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+            Program.playerGold = diceRolled.Sum();
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
+        }
     }
     class Paladin : Class
     {
+        public int divineSenseUses = 0;
+        public int layOnHandsHitPool = 5;
         public Paladin()
         {
             className = "Paladin";
             classDescription = "A holy warrior bound to a sacred oath.";
             primaryAbility = "Strength";
+        }
+        public override int CalculateHitDice()
+        {
+            return 10 * Program.playerLevel;
+        }
+        public override int CalculateHitPoints()
+        {
+            if (Program.playerLevel == 1)
+            {
+                return 10 + Program.playerConstitution;
+            }
+            else
+            {
+                return diceRollLastLevel + (Program.playerConstitution * (Program.playerLevel - 1));
+            }
+        }
+        public override void PlayerCreation()
+        {
+            Program.AddProficiency("Light Armour");
+            Program.AddProficiency("Medium Armour");
+            Program.AddProficiency("Heavy Armour");
+            Program.AddProficiency("Simple Weapons");
+            Program.AddProficiency("Martial Weapons");
+            Program.AddProficiency("Wisdom");
+            Program.AddProficiency("Charisma");
+            int selectedSkills = 0;
+            List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ATHLETICS, Program.Skill.INSIGHT, Program.Skill.INTIMIDATION, Program.Skill.MEDICINE, 
+                Program.Skill.PERSUASION, Program.Skill.RELIGION };
+            while (selectedSkills < 2)
+            {
+                Console.Clear();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    Console.WriteLine(Program.GetDescription(skill));
+                }
+                Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    {
+                        Program.AddProficiency(Program.GetDescription(skill));
+                        allowedSkills.Remove(skill);
+                        selectedSkills++;
+                        break;
+                    }
+                }
+            }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
         }
     }
     class Ranger : Class

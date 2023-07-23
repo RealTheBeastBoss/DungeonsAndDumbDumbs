@@ -154,6 +154,7 @@ namespace DungeonsAndDumbDumbs
         public static int playerWisdom = 0;
         public static int playerCharisma = 0;
         public static int playerLevel = 1;
+        public static int playerXP = 0;
         public static int playerGold = 0;
         public static int playerSilver = 0;
         public static int playerCopper = 0;
