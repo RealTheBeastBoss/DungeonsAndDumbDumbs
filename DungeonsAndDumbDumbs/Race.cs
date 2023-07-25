@@ -8,8 +8,6 @@ namespace DungeonsAndDumbDumbs
         public string raceName;
         public string infoText;
         public int travelSpeed;
-        public bool hasDarkvision = false;
-        public List<Program.Language> languages = new List<Program.Language>();
         public virtual void PlayerCreation()
         {
 
@@ -48,8 +46,7 @@ namespace DungeonsAndDumbDumbs
             raceName = "Dragonborn";
             travelSpeed = 30;
             infoText = "Your draconic ancestry gives you a specific damage resistance and means you have the\nability to breath an elemental power.";
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.DRACONIC);
+            Program.player.languages.Add(Program.Language.DRACONIC);
         }
         public override void PlayerCreation()
         {
@@ -71,7 +68,7 @@ namespace DungeonsAndDumbDumbs
                         Console.Write($"\nDo you want the colour of your dragon to be {type.typeName}?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Dragonborn player = (Dragonborn)Program.playerRace;
+                            Dragonborn player = (Dragonborn)Program.player.characterRace;
                             player.dragonType = type;
                             selectedType = true;
                             break;
@@ -89,14 +86,12 @@ namespace DungeonsAndDumbDumbs
             travelSpeed = 25;
             infoText = "As you spend long stretches of time in dark places, you have naturally good vision in the dark.\n" +
             "You are particularly resistant to poison, as well as a proficiency with some axes, hammers and tools. \nYou are also naturally tough and are good at working with stone.";
-            hasDarkvision = true;
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.DWARVISH);
+            Program.player.languages.Add(Program.Language.DWARVISH);
         }
         public override void PlayerCreation()
         {
-            Program.AddAbilityScore("Constitution", 2);
-            Program.AddAbilityScore("Wisdom", 1);
+            Program.AddAbilityScore(Program.player, "Constitution", 2);
+            Program.AddAbilityScore(Program.player, "Wisdom", 1);
             bool selectedProficiency = false;
             while (!selectedProficiency)
             {
@@ -106,15 +101,15 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 if (response == "brewer" || response == "brewer's supplies")
                 {
-                    Program.AddProficiency("Brewer's Supplies");
+                    Program.AddProficiency(Program.player, "Brewer's Supplies");
                     selectedProficiency = true;
                 } else if (response == "mason" || response == "mason's tools")
                 {
-                    Program.AddProficiency("Mason's Tools");
+                    Program.AddProficiency(Program.player, "Mason's Tools");
                     selectedProficiency = true;
                 } else if (response == "smith" || response == "smith's tools")
                 {
-                    Program.AddProficiency("Smith's Tools");
+                    Program.AddProficiency(Program.player, "Smith's Tools");
                     selectedProficiency = true;
                 }
             }
@@ -128,14 +123,12 @@ namespace DungeonsAndDumbDumbs
             travelSpeed = 25;
             infoText = "As you spend long stretches of time in dark places, you have naturally good vision in the dark.\n" +
             "You are particularly resistant to poison, as well as a proficiency with some axes, hammers and tools. \nYou are also good at working with stone and armour.";
-            hasDarkvision = true;
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.DWARVISH);
+            Program.player.languages.Add(Program.Language.DWARVISH);
         }
         public override void PlayerCreation()
         {
-            Program.AddAbilityScore("Strength", 2);
-            Program.AddAbilityScore("Constitution", 2);
+            Program.AddAbilityScore(Program.player, "Strength", 2);
+            Program.AddAbilityScore(Program.player, "Constitution", 2);
             bool selectedProficiency = false;
             while (!selectedProficiency)
             {
@@ -145,17 +138,17 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 if (response == "brewer" || response == "brewer's supplies")
                 {
-                    Program.AddProficiency("Brewer's Supplies");
+                    Program.AddProficiency(Program.player, "Brewer's Supplies");
                     selectedProficiency = true;
                 }
                 else if (response == "mason" || response == "mason's tools")
                 {
-                    Program.AddProficiency("Mason's Tools");
+                    Program.AddProficiency(Program.player, "Mason's Tools");
                     selectedProficiency = true;
                 }
                 else if (response == "smith" || response == "smith's tools")
                 {
-                    Program.AddProficiency("Smith's Tools");
+                    Program.AddProficiency(Program.player, "Smith's Tools");
                     selectedProficiency = true;
                 }
             }
@@ -170,14 +163,12 @@ namespace DungeonsAndDumbDumbs
             infoText = "As you typically live in forests of twilight, you can see well in the dark as well as being perceptive and intelligent.\n" +
             "As an elf, magic doesn't affect you as much as others. Your sleep is only 4 hours a day, rather than 8.\nElves are proficient with some swords and bows, as well as " +
             "being able to have a cantrip available.";
-            hasDarkvision = true;
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.ELVISH);
+            Program.player.languages.Add(Program.Language.ELVISH);
         }
         public override void PlayerCreation() // Selecting a Cantrip
         {
-            Program.AddAbilityScore("Dexterity", 2);
-            Program.AddAbilityScore("Intelligence", 1);
+            Program.AddAbilityScore(Program.player, "Dexterity", 2);
+            Program.AddAbilityScore(Program.player, "Intelligence", 1);
             bool selectedCantrip = false;
             while (!selectedCantrip)
             {
@@ -199,7 +190,7 @@ namespace DungeonsAndDumbDumbs
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerCantrips.Add(spell);
+                            Program.player.cantrips.Add(spell);
                             selectedCantrip = true;
                             break;
                         }
@@ -218,14 +209,12 @@ namespace DungeonsAndDumbDumbs
             infoText = "As you typically live in forests of twilight, you can see well in the dark as well as being perceptive and wise.\n" +
             "As an elf, magic doesn't affect you as much as others. Your sleep is only 4 hours a day, rather than 8.\nElves are proficient with some swords and bows, as well as " +
             "being fast and are good at camoflague.";
-            hasDarkvision = true;
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.ELVISH);
+            Program.player.languages.Add(Program.Language.ELVISH);
         }
         public override void PlayerCreation()
         {
-            Program.AddAbilityScore("Dexterity", 2);
-            Program.AddAbilityScore("Wisdom", 1);
+            Program.AddAbilityScore(Program.player, "Dexterity", 2);
+            Program.AddAbilityScore(Program.player, "Wisdom", 1);
         }
     }
     class RockGnome : Race
@@ -237,10 +226,8 @@ namespace DungeonsAndDumbDumbs
             infoText = "As you spend long stretches of time in dark places, you have naturally good vision in the dark.\n" +
             "You are intelligent, wise, and well-versed with being attacked by magic as well as having a lot of knowledge\non the subject. Gnomes also have a great ability to create " +
             "clockwork devices using gold.";
-            hasDarkvision = true;
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.GNOMISH);
-            languages.Add(Program.Language.UNDERCOMMON);
+            Program.player.languages.Add(Program.Language.GNOMISH);
+            Program.player.languages.Add(Program.Language.UNDERCOMMON);
         }
     }
     class HalfElf : Race
@@ -251,13 +238,11 @@ namespace DungeonsAndDumbDumbs
             travelSpeed = 30;
             infoText = "With a natural charisma, you can get your way around a couple of subjects you wouldn't otherwise know.\nThe elf in you " +
             "allows you to see well in the dark and are opposed to magic.";
-            hasDarkvision = true;
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.ELVISH);
+            Program.player.languages.Add(Program.Language.ELVISH);
         }
         public override void PlayerCreation()
         {
-            Program.playerCharisma += 2;
+            Program.player.charismaScore += 2;
             List<string> abilities = new List<string>() { "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom" };
             bool selectedAbilities = false;
             while (!selectedAbilities)
@@ -273,7 +258,7 @@ namespace DungeonsAndDumbDumbs
                 {
                     if (response == ability.ToLower()) 
                     {
-                        Program.AddAbilityScore(ability, 1);
+                        Program.AddAbilityScore(Program.player, ability, 1);
                         abilities.Remove(ability);
                         if (abilities.Count == 3) selectedAbilities = true;
                         break;
@@ -286,16 +271,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in Program.allSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in Program.allSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.playerProficiencies.Add(Program.GetDescription(skill));
+                        Program.player.proficiencies.Add(Program.GetDescription(skill));
                         selectedSkills++;
                         break;
                     }
@@ -307,7 +292,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Language language in Program.allLanguages)
                 {
-                    if (!languages.Contains(language))
+                    if (!Program.player.languages.Contains(language))
                     {
                         Console.WriteLine(Program.GetDescription(language));
                     }
@@ -316,9 +301,9 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Language language in Program.allLanguages)
                 {
-                    if (!languages.Contains(language) && response == Program.GetDescription(language).ToLower())
+                    if (!Program.player.languages.Contains(language) && response == Program.GetDescription(language).ToLower())
                     {
-                        languages.Add(language);
+                        Program.player.languages.Add(language);
                         selectedLanguage = true;
                         break;
                     }
@@ -334,9 +319,7 @@ namespace DungeonsAndDumbDumbs
             travelSpeed = 30;
             infoText = "As an Orc-kind, you can see well in the dark. You are also very intimidating and\nhave high endurance. You can savagely attack to " +
             "deal more damage.";
-            hasDarkvision = true;
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.ORC);
+            Program.player.languages.Add(Program.Language.ORC);
         }
     }
     class LightHalfling : Race
@@ -346,13 +329,12 @@ namespace DungeonsAndDumbDumbs
             raceName = "Lightfoot Halfling";
             travelSpeed = 25;
             infoText = "Lightfoot Halflings are naturally lucky, brave, nimble, and stealthy.";
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.HALFLING);
+            Program.player.languages.Add(Program.Language.HALFLING);
         }
         public override void PlayerCreation()
         {
-            Program.AddAbilityScore("Dexterity", 2);
-            Program.AddAbilityScore("Charisma", 1);
+            Program.AddAbilityScore(Program.player, "Dexterity", 2);
+            Program.AddAbilityScore(Program.player, "Charisma", 1);
         }
     }
     class StoutHalfling : Race
@@ -362,13 +344,12 @@ namespace DungeonsAndDumbDumbs
             raceName = "Stout Halfling";
             travelSpeed = 25;
             infoText = "Stout Halflings are naturally lucky, brave, nimble, and resistant to poisons.";
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.HALFLING);
+            Program.player.languages.Add(Program.Language.HALFLING);
         }
         public override void PlayerCreation()
         {
-            Program.AddAbilityScore("Dexterity", 2);
-            Program.AddAbilityScore("Constitution", 1);
+            Program.AddAbilityScore(Program.player, "Dexterity", 2);
+            Program.AddAbilityScore(Program.player, "Constitution", 1);
         }
     }
     class Human : Race
@@ -378,18 +359,17 @@ namespace DungeonsAndDumbDumbs
             raceName = "Human";
             travelSpeed = 30;
             infoText = "Humans are very well-rounded creatures and have capacity for languages.";
-            languages.Add(Program.Language.COMMON);
         }
         public override void PlayerCreation()
         {
-            Program.AddAbilityScore("All", 1);
+            Program.AddAbilityScore(Program.player, "All", 1);
             bool selectedLanguage = false;
             while (!selectedLanguage)
             {
                 Console.Clear();
                 foreach (Program.Language language in Program.allLanguages)
                 {
-                    if (!languages.Contains(language))
+                    if (!Program.player.languages.Contains(language))
                     {
                         Console.WriteLine(Program.GetDescription(language));
                     }
@@ -398,9 +378,9 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Language language in Program.allLanguages)
                 {
-                    if (!languages.Contains(language) && response == Program.GetDescription(language).ToLower())
+                    if (!Program.player.languages.Contains(language) && response == Program.GetDescription(language).ToLower())
                     {
-                        languages.Add(language);
+                        Program.player.languages.Add(language);
                         selectedLanguage = true;
                         break;
                     }
@@ -415,7 +395,6 @@ namespace DungeonsAndDumbDumbs
             raceName = "Variant Human";
             travelSpeed = 30;
             infoText = "This breed of human has more capacity for mastering a skill. Is good at close-combat with enemies.";
-            languages.Add(Program.Language.COMMON);
         }
         public override void PlayerCreation()
         {
@@ -425,7 +404,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Language language in Program.allLanguages)
                 {
-                    if (!languages.Contains(language))
+                    if (!Program.player.languages.Contains(language))
                     {
                         Console.WriteLine(Program.GetDescription(language));
                     }
@@ -434,9 +413,9 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Language language in Program.allLanguages)
                 {
-                    if (!languages.Contains(language) && response == Program.GetDescription(language).ToLower())
+                    if (!Program.player.languages.Contains(language) && response == Program.GetDescription(language).ToLower())
                     {
-                        languages.Add(language);
+                        Program.player.languages.Add(language);
                         selectedLanguage = true;
                         break;
                     }
@@ -457,7 +436,7 @@ namespace DungeonsAndDumbDumbs
                 {
                     if (response == ability.ToLower())
                     {
-                        Program.AddAbilityScore(ability, 1);
+                        Program.AddAbilityScore(Program.player, ability, 1);
                         abilities.Remove(ability);
                         if (abilities.Count == 4) selectedAbilities = true;
                         break;
@@ -470,16 +449,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in Program.allSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in Program.allSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         selectedSkills++;
                         break;
                     }
@@ -493,13 +472,11 @@ namespace DungeonsAndDumbDumbs
         {
             raceName = "Tiefling";
             infoText = "Tieflings can see in the dark as well as being fire resistant. You also have some demon-like magic.";
-            hasDarkvision = true;
-            languages.Add(Program.Language.COMMON);
-            languages.Add(Program.Language.INFERNAL);
+            Program.player.languages.Add(Program.Language.INFERNAL);
         }
         public override void PlayerCreation()
         {
-            Program.playerCantrips.Add(Program.thaumaturgy);
+            Program.player.cantrips.Add(Program.thaumaturgy);
         }
     }
 }

@@ -13,28 +13,29 @@ namespace DungeonsAndDumbDumbs
         public string primaryAbility;
         public int diceRollLastLevel;
         public string classDescription;
+        public int classLevel = 1;
         public virtual void PlayerCreation()
         {
 
         }
         public virtual Tuple<int, int> CalculateHitDice()
         {
-            return new Tuple<int, int>(Program.playerLevel, 8);
+            return new Tuple<int, int>(classLevel, 8);
         }
         public virtual int CalculateHitPoints()
         {
-            if (Program.playerLevel == 1)
+            if (classLevel == 1)
             {
-                return 8 + Program.GetAbilityModifier("Constitution");
+                return 8 + Program.GetAbilityModifier(Program.player, "Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
             }
         }
         public virtual int CalculateArmourClass()
         {
-            return 10 + Program.GetAbilityModifier("Dexterity");
+            return 10 + Program.GetAbilityModifier(Program.player, "Dexterity");
         }
         public virtual void IncreaseLevel(int diceSize = 8)
         {
@@ -54,13 +55,13 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Medium Armour");
-            Program.AddProficiency("Shields");
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Martial Weapons");
-            Program.AddProficiency("Strength");
-            Program.AddProficiency("Constitution");
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Medium Armour");
+            Program.AddProficiency(Program.player, "Shields");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Martial Weapons");
+            Program.AddProficiency(Program.player, "Strength");
+            Program.AddProficiency(Program.player, "Constitution");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ANIMALS, Program.Skill.ATHLETICS, Program.Skill.INTIMIDATION, Program.Skill.NATURE, 
                 Program.Skill.PERCEPTION, Program.Skill.SURVIVAL };
@@ -69,16 +70,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -88,27 +89,27 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
         public override Tuple<int, int> CalculateHitDice()
         {
-            return new Tuple<int, int>(Program.playerLevel, 12);
+            return new Tuple<int, int>(classLevel, 12);
         }
         public override int CalculateHitPoints()
         {
-            if (Program.playerLevel == 1)
+            if (classLevel == 1)
             {
-                return 12 + Program.GetAbilityModifier("Constitution");
+                return 12 + Program.GetAbilityModifier(Program.player, "Constitution");
             } else
             {
-                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
             }
         }
         public override int CalculateArmourClass()
         {
-            return 10 + Program.GetAbilityModifier("Constitution") + Program.GetAbilityModifier("Dexterity"); // TODO: Only when not wearing any armour
+            return 10 + Program.GetAbilityModifier(Program.player, "Constitution") + Program.GetAbilityModifier(Program.player, "Dexterity"); // TODO: Only when not wearing any armour
         }
     }
     class Bard : Class
@@ -122,29 +123,29 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Hand Crossbows");
-            Program.AddProficiency("Longswords");
-            Program.AddProficiency("Rapiers");
-            Program.AddProficiency("Dexterity");
-            Program.AddProficiency("Charisma");
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Hand Crossbows");
+            Program.AddProficiency(Program.player, "Longswords");
+            Program.AddProficiency(Program.player, "Rapiers");
+            Program.AddProficiency(Program.player, "Dexterity");
+            Program.AddProficiency(Program.player, "Charisma");
             int selectedSkills = 0;
             while (selectedSkills < 3)
             {
                 Console.Clear();
                 foreach (Program.Skill skill in Program.allSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in Program.allSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         selectedSkills++;
                         break;
                     }
@@ -156,7 +157,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.bardSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -165,13 +166,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.bardSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerCantrips.Add(spell);
+                            Program.player.cantrips.Add(spell);
                             selectedCantrips++;
                             break;
                         }
@@ -184,7 +185,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.bardSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -193,13 +194,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.bardSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerKnownSpells.Add(spell);
+                            Program.player.knownSpells.Add(spell);
                             selectedSpells++;
                             break;
                         }
@@ -209,8 +210,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -224,13 +225,13 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Medium Armour");
-            Program.AddProficiency("Heavy Armour");
-            Program.AddProficiency("Shields");
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Wisdom");
-            Program.AddProficiency("Charisma");
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Medium Armour");
+            Program.AddProficiency(Program.player, "Heavy Armour");
+            Program.AddProficiency(Program.player, "Shields");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Wisdom");
+            Program.AddProficiency(Program.player, "Charisma");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.HISTORY, Program.Skill.INSIGHT, Program.Skill.MEDICINE, Program.Skill.PERSUASION, Program.Skill.RELIGION };
             while (selectedSkills < 2)
@@ -238,16 +239,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -260,7 +261,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.clericSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -269,28 +270,28 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.clericSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerCantrips.Add(spell);
+                            Program.player.cantrips.Add(spell);
                             selectedCantrips++;
                             break;
                         }
                     }
                 }
             }
-            Program.playerKnownSpells.Add(Program.bless);
-            Program.playerKnownSpells.Add(Program.cureWounds);
+            Program.player.knownSpells.Add(Program.bless);
+            Program.player.knownSpells.Add(Program.cureWounds);
             int selectedSpells = 0;
             while (selectedSpells < 3)
             {
                 Console.Clear();
                 foreach (Spell spell in Program.clericSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -299,13 +300,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.clericSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerKnownSpells.Add(spell);
+                            Program.player.knownSpells.Add(spell);
                             selectedSpells++;
                             break;
                         }
@@ -315,8 +316,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -330,23 +331,23 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
-            Program.playerRace.languages.Add(Program.Language.DRUIDIC);
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Medium Armour");
-            Program.AddProficiency("Shields");
-            Program.AddProficiency("Clubs");
-            Program.AddProficiency("Daggers");
-            Program.AddProficiency("Darts");
-            Program.AddProficiency("Javelins");
-            Program.AddProficiency("Maces");
-            Program.AddProficiency("Quarterstaffs");
-            Program.AddProficiency("Scimitars");
-            Program.AddProficiency("Sickles");
-            Program.AddProficiency("Slings");
-            Program.AddProficiency("Spears");
-            Program.AddProficiency("Herbalism Kit");
-            Program.AddProficiency("Intelligence");
-            Program.AddProficiency("Wisdom");
+            Program.player.languages.Add(Program.Language.DRUIDIC);
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Medium Armour");
+            Program.AddProficiency(Program.player, "Shields");
+            Program.AddProficiency(Program.player, "Clubs");
+            Program.AddProficiency(Program.player, "Daggers");
+            Program.AddProficiency(Program.player, "Darts");
+            Program.AddProficiency(Program.player, "Javelins");
+            Program.AddProficiency(Program.player, "Maces");
+            Program.AddProficiency(Program.player, "Quarterstaffs");
+            Program.AddProficiency(Program.player, "Scimitars");
+            Program.AddProficiency(Program.player, "Sickles");
+            Program.AddProficiency(Program.player, "Slings");
+            Program.AddProficiency(Program.player, "Spears");
+            Program.AddProficiency(Program.player, "Herbalism Kit");
+            Program.AddProficiency(Program.player, "Intelligence");
+            Program.AddProficiency(Program.player, "Wisdom");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ARCANA, Program.Skill.ANIMALS, Program.Skill.INSIGHT, Program.Skill.MEDICINE, Program.Skill.NATURE,
                 Program.Skill.PERCEPTION, Program.Skill.RELIGION, Program.Skill.SURVIVAL };
@@ -355,16 +356,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -377,7 +378,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.druidSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -386,13 +387,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.druidSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerCantrips.Add(spell);
+                            Program.player.cantrips.Add(spell);
                             selectedCantrips++;
                             break;
                         }
@@ -405,7 +406,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.druidSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -414,13 +415,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.druidSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerKnownSpells.Add(spell);
+                            Program.player.knownSpells.Add(spell);
                             selectedSpells++;
                             break;
                         }
@@ -430,8 +431,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -463,29 +464,29 @@ namespace DungeonsAndDumbDumbs
         }
         public override Tuple<int, int> CalculateHitDice()
         {
-            return new Tuple<int, int>(Program.playerLevel, 10);
+            return new Tuple<int, int>(classLevel, 10);
         }
         public override int CalculateHitPoints()
         {
-            if (Program.playerLevel == 1)
+            if (classLevel == 1)
             {
-                return 10 + Program.GetAbilityModifier("Constitution");
+                return 10 + Program.GetAbilityModifier(Program.player, "Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
             }
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Medium Armour");
-            Program.AddProficiency("Heavy Armour");
-            Program.AddProficiency("Shields");
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Martial Weapons");
-            Program.AddProficiency("Strength");
-            Program.AddProficiency("Constitution");
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Medium Armour");
+            Program.AddProficiency(Program.player, "Heavy Armour");
+            Program.AddProficiency(Program.player, "Shields");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Martial Weapons");
+            Program.AddProficiency(Program.player, "Strength");
+            Program.AddProficiency(Program.player, "Constitution");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ACROBATICS, Program.Skill.ANIMALS, Program.Skill.ATHLETICS, Program.Skill.HISTORY, Program.Skill.INSIGHT, 
                 Program.Skill.INTIMIDATION, Program.Skill.PERCEPTION, Program.Skill.SURVIVAL };
@@ -494,16 +495,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -535,8 +536,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -550,14 +551,14 @@ namespace DungeonsAndDumbDumbs
         }
         public override int CalculateArmourClass()
         {
-            return 10 + Program.GetAbilityModifier("Dexterity") + Program.GetAbilityModifier("Wisdom"); // TODO: Only while not wearing armour or sheild
+            return 10 + Program.GetAbilityModifier(Program.player, "Dexterity") + Program.GetAbilityModifier(Program.player, "Wisdom"); // TODO: Only while not wearing armour or sheild
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Shortswords");
-            Program.AddProficiency("Strength");
-            Program.AddProficiency("Dexterity");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Shortswords");
+            Program.AddProficiency(Program.player, "Strength");
+            Program.AddProficiency(Program.player, "Dexterity");
             bool selectedArtisanTools = false;
             List<string> artisanTools = new List<string>() { "Alchemist's Supplies", "Brewer's Supplies", "Caligrapher's Supplies", "Carpenter's Tools", "Cartographer's Tools", "Cobbler's Tools",
                 "Cook's Utensils", "Glassblower's Tools", "Jeweler's Tools", "Leatherworker's Tools", "Mason's Tools", "Painter's Supplies", "Potter's Tools", "Smith's Tools", "Tinker's Tools",
@@ -567,7 +568,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (string toolSet in artisanTools)
                 {
-                    if (!Program.playerProficiencies.Contains(toolSet))
+                    if (!Program.player.proficiencies.Contains(toolSet))
                     {
                         Console.WriteLine(toolSet);
                     }
@@ -577,9 +578,9 @@ namespace DungeonsAndDumbDumbs
                 foreach (string toolSet in artisanTools)
                 {
                     string shortForm = toolSet.Substring(0, toolSet.IndexOf('\''));
-                    if (!Program.playerProficiencies.Contains(toolSet) && (response == shortForm.ToLower() || response == toolSet.ToLower()))
+                    if (!Program.player.proficiencies.Contains(toolSet) && (response == shortForm.ToLower() || response == toolSet.ToLower()))
                     {
-                        Program.AddProficiency(toolSet);
+                        Program.AddProficiency(Program.player, toolSet);
                         selectedArtisanTools = true;
                         break;
                     }
@@ -593,16 +594,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -612,8 +613,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.playerGold = diceRolled.Sum();
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum();
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -629,28 +630,28 @@ namespace DungeonsAndDumbDumbs
         }
         public override Tuple<int, int> CalculateHitDice()
         {
-            return new Tuple<int, int>(Program.playerLevel, 10);
+            return new Tuple<int, int>(classLevel, 10);
         }
         public override int CalculateHitPoints()
         {
-            if (Program.playerLevel == 1)
+            if (classLevel == 1)
             {
-                return 10 + Program.GetAbilityModifier("Constitution");
+                return 10 + Program.GetAbilityModifier(Program.player, "Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
             }
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Medium Armour");
-            Program.AddProficiency("Heavy Armour");
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Martial Weapons");
-            Program.AddProficiency("Wisdom");
-            Program.AddProficiency("Charisma");
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Medium Armour");
+            Program.AddProficiency(Program.player, "Heavy Armour");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Martial Weapons");
+            Program.AddProficiency(Program.player, "Wisdom");
+            Program.AddProficiency(Program.player, "Charisma");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ATHLETICS, Program.Skill.INSIGHT, Program.Skill.INTIMIDATION, Program.Skill.MEDICINE, 
                 Program.Skill.PERSUASION, Program.Skill.RELIGION };
@@ -659,16 +660,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -678,8 +679,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -693,28 +694,28 @@ namespace DungeonsAndDumbDumbs
         }
         public override Tuple<int, int> CalculateHitDice()
         {
-            return new Tuple<int, int>(Program.playerLevel, 10);
+            return new Tuple<int, int>(classLevel, 10);
         }
         public override int CalculateHitPoints()
         {
-            if (Program.playerLevel == 1)
+            if (classLevel == 1)
             {
-                return 10 + Program.GetAbilityModifier("Constitution");
+                return 10 + Program.GetAbilityModifier(Program.player, "Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
             }
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Medium Armour");
-            Program.AddProficiency("Shields");
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Martial Weapons");
-            Program.AddProficiency("Strength");
-            Program.AddProficiency("Dexterity");
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Medium Armour");
+            Program.AddProficiency(Program.player, "Shields");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Martial Weapons");
+            Program.AddProficiency(Program.player, "Strength");
+            Program.AddProficiency(Program.player, "Dexterity");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ANIMALS,  Program.Skill.ATHLETICS, Program.Skill.INSIGHT, Program.Skill.INVESTIGATION, Program.Skill.NATURE,
                 Program.Skill.PERCEPTION, Program.Skill.STEALTH, Program.Skill.SURVIVAL };
@@ -723,16 +724,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -742,8 +743,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -759,16 +760,16 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
-            Program.playerRace.languages.Add(Program.Language.THIEVESCANT);
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Hand Crossbows");
-            Program.AddProficiency("Longswords");
-            Program.AddProficiency("Rapiers");
-            Program.AddProficiency("Shortswords");
-            Program.AddProficiency("Thieve's Tools");
-            Program.AddProficiency("Dexterity");
-            Program.AddProficiency("Intelligence");
+            Program.player.languages.Add(Program.Language.THIEVESCANT);
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Hand Crossbows");
+            Program.AddProficiency(Program.player, "Longswords");
+            Program.AddProficiency(Program.player, "Rapiers");
+            Program.AddProficiency(Program.player, "Shortswords");
+            Program.AddProficiency(Program.player, "Thieve's Tools");
+            Program.AddProficiency(Program.player, "Dexterity");
+            Program.AddProficiency(Program.player, "Intelligence");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ACROBATICS,  Program.Skill.ATHLETICS, Program.Skill.DECEPTION, Program.Skill.INSIGHT, 
                 Program.Skill.INTIMIDATION, Program.Skill.INVESTIGATION, Program.Skill.PERCEPTION, Program.Skill.PERFORMANCE, Program.Skill.PERSUASION, Program.Skill.SLEIGHTOFHAND, 
@@ -778,16 +779,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -803,7 +804,7 @@ namespace DungeonsAndDumbDumbs
             while (selectedExpertises < 2)
             {
                 Console.Clear();
-                foreach (string proficiency in Program.playerProficiencies)
+                foreach (string proficiency in Program.player.proficiencies)
                 {
                     if ((proficiency == "Thieve's Tools" || skillNames.Contains(proficiency)) && !doubleProficiency.Contains(proficiency))
                     {
@@ -818,7 +819,7 @@ namespace DungeonsAndDumbDumbs
                     selectedExpertises++;
                     continue;
                 }
-                foreach (string proficiency in Program.playerProficiencies)
+                foreach (string proficiency in Program.player.proficiencies)
                 {
                     if (skillNames.Contains(proficiency) && !doubleProficiency.Contains(proficiency) && response == proficiency.ToLower())
                     {
@@ -831,8 +832,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -848,32 +849,32 @@ namespace DungeonsAndDumbDumbs
         }
         public override Tuple<int, int> CalculateHitDice()
         {
-            return new Tuple<int, int>(Program.playerLevel, 6);
+            return new Tuple<int, int>(classLevel, 6);
         }
         public override int CalculateHitPoints()
         {
-            if (Program.playerLevel == 1)
+            if (classLevel == 1)
             {
-                return 7 + Program.GetAbilityModifier("Constitution");
+                return 7 + Program.GetAbilityModifier(Program.player, "Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1)) + Program.playerLevel;
+                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1)) + classLevel;
             }
         }
         public override int CalculateArmourClass()
         {
-            return 13 + Program.GetAbilityModifier("Dexterity"); // TODO: Not when wearing armour
+            return 13 + Program.GetAbilityModifier(Program.player, "Dexterity"); // TODO: Not when wearing armour
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Daggers");
-            Program.AddProficiency("Darts");
-            Program.AddProficiency("Slings");
-            Program.AddProficiency("Quaterstaffs");
-            Program.AddProficiency("Light Crossbows");
-            Program.AddProficiency("Constitution");
-            Program.AddProficiency("Charisma");
+            Program.AddProficiency(Program.player, "Daggers");
+            Program.AddProficiency(Program.player, "Darts");
+            Program.AddProficiency(Program.player, "Slings");
+            Program.AddProficiency(Program.player, "Quaterstaffs");
+            Program.AddProficiency(Program.player, "Light Crossbows");
+            Program.AddProficiency(Program.player, "Constitution");
+            Program.AddProficiency(Program.player, "Charisma");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ARCANA, Program.Skill.DECEPTION, Program.Skill.INSIGHT,
                 Program.Skill.INTIMIDATION, Program.Skill.PERSUASION, Program.Skill.RELIGION };
@@ -882,16 +883,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -928,7 +929,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.sorcererSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -937,13 +938,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.sorcererSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerCantrips.Add(spell);
+                            Program.player.cantrips.Add(spell);
                             selectedCantrips++;
                             break;
                         }
@@ -956,7 +957,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.sorcererSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -965,13 +966,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.sorcererSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerKnownSpells.Add(spell);
+                            Program.player.knownSpells.Add(spell);
                             selectedSpells++;
                             break;
                         }
@@ -981,8 +982,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 3 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(3, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -996,10 +997,10 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Light Armour");
-            Program.AddProficiency("Simple Weapons");
-            Program.AddProficiency("Wisdom");
-            Program.AddProficiency("Charisma");
+            Program.AddProficiency(Program.player, "Light Armour");
+            Program.AddProficiency(Program.player, "Simple Weapons");
+            Program.AddProficiency(Program.player, "Wisdom");
+            Program.AddProficiency(Program.player, "Charisma");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ARCANA, Program.Skill.DECEPTION, Program.Skill.HISTORY,
                 Program.Skill.INTIMIDATION, Program.Skill.INVESTIGATION, Program.Skill.NATURE, Program.Skill.RELIGION };
@@ -1008,16 +1009,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -1030,7 +1031,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.warlockSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -1039,13 +1040,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.warlockSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerCantrips.Add(spell);
+                            Program.player.cantrips.Add(spell);
                             selectedCantrips++;
                             break;
                         }
@@ -1058,7 +1059,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.warlockSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -1067,13 +1068,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.warlockSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerKnownSpells.Add(spell);
+                            Program.player.knownSpells.Add(spell);
                             selectedSpells++;
                             break;
                         }
@@ -1083,8 +1084,8 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
     }
@@ -1099,13 +1100,13 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
-            Program.AddProficiency("Daggers");
-            Program.AddProficiency("Darts");
-            Program.AddProficiency("Slings");
-            Program.AddProficiency("Quarterstaffs");
-            Program.AddProficiency("Light Crossbows");
-            Program.AddProficiency("Intelligence");
-            Program.AddProficiency("Wisdom");
+            Program.AddProficiency(Program.player, "Daggers");
+            Program.AddProficiency(Program.player, "Darts");
+            Program.AddProficiency(Program.player, "Slings");
+            Program.AddProficiency(Program.player, "Quarterstaffs");
+            Program.AddProficiency(Program.player, "Light Crossbows");
+            Program.AddProficiency(Program.player, "Intelligence");
+            Program.AddProficiency(Program.player, "Wisdom");
             int selectedSkills = 0;
             List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ARCANA, Program.Skill.HISTORY, Program.Skill.INSIGHT, Program.Skill.INVESTIGATION, 
                 Program.Skill.MEDICINE, Program.Skill.RELIGION };
@@ -1114,16 +1115,16 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
-                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
                     {
-                        Program.AddProficiency(Program.GetDescription(skill));
+                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
@@ -1136,7 +1137,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.wizardSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -1145,13 +1146,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.wizardSpells)
                 {
-                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerCantrips.Add(spell);
+                            Program.player.cantrips.Add(spell);
                             selectedCantrips++;
                             break;
                         }
@@ -1164,7 +1165,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Spell spell in Program.wizardSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell))
                     {
                         Console.WriteLine(spell.spellName);
                     }
@@ -1173,13 +1174,13 @@ namespace DungeonsAndDumbDumbs
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.wizardSpells)
                 {
-                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
-                            Program.playerKnownSpells.Add(spell);
+                            Program.player.knownSpells.Add(spell);
                             selectedSpells++;
                             break;
                         }
@@ -1189,23 +1190,23 @@ namespace DungeonsAndDumbDumbs
             Console.Clear();
             Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
-            Program.playerGold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Program.player.gold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ReadLine();
         }
         public override Tuple<int, int> CalculateHitDice()
         {
-            return new Tuple<int, int>(Program.playerLevel, 6);
+            return new Tuple<int, int>(classLevel, 6);
         }
         public override int CalculateHitPoints()
         {
-            if (Program.playerLevel == 1)
+            if (classLevel == 1)
             {
-                return 6 + Program.GetAbilityModifier("Constitution");
+                return 6 + Program.GetAbilityModifier(Program.player, "Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
+                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
             }
         }
     }

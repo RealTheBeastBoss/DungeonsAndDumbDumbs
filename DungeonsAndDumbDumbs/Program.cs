@@ -154,30 +154,12 @@ namespace DungeonsAndDumbDumbs
         public static List<Spell> sorcererSpells = new List<Spell>() { acidSplash, burningHands, colourSpray, dancingLights, charmPerson, comprehendLanguage, detectMagic, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
             minorIllusion, poisonSpray, prestidigitation, rayOfFrost, shockingGrasp, thunderWave, trueStrike };
         public static List<Spell> warlockSpells = new List<Spell>() { burningHands };
-        // Player Variables:
-        public static string playerName;
-        public static Race playerRace;
-        public static Class playerClass;
-        public static List<Spell> playerCantrips = new List<Spell>();
-        public static List<Spell> playerKnownSpells = new List<Spell>();
-        public static List<string> playerProficiencies = new List<string>();
-        public static int playerProficiencyBonus = 2;
-        public static int playerStrength = 0;
-        public static int playerDexterity = 0;
-        public static int playerConstitution = 0;
-        public static int playerIntelligence = 0;
-        public static int playerWisdom = 0;
-        public static int playerCharisma = 0;
-        public static int playerLevel = 1;
-        public static int playerXP = 0;
-        public static int playerGold = 0;
-        public static int playerSilver = 0;
-        public static int playerCopper = 0;
+        public static Player player = new Player();
 
         static void Main(string[] args)
         {
             Console.Write("What is the name of your character?: ");
-            playerName = FormatName(Console.ReadLine());
+            player.name = FormatName(Console.ReadLine());
             bool selectedRace = false;
             while (!selectedRace)
             {
@@ -192,8 +174,8 @@ namespace DungeonsAndDumbDumbs
                 {
                     if (response.ToLower() == race.Item1.ToLower())
                     {
-                        playerRace = (Race)Activator.CreateInstance(race.Item2);
-                        Console.WriteLine($"You've chosen the race \"{playerRace.raceName}\", here is some more information about them:\n\n{playerRace.infoText}\n");
+                        player.characterRace = (Race)Activator.CreateInstance(race.Item2);
+                        Console.WriteLine($"You've chosen the race \"{player.characterRace.raceName}\", here is some more information about them:\n\n{player.characterRace.infoText}\n");
                         Console.Write("Do you wish for this to be your race?: ");
                         if (CheckConfirmation())
                         {
@@ -203,7 +185,7 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
-            playerRace.PlayerCreation();
+            player.characterRace.PlayerCreation();
             bool selectedClass = false;
             while (!selectedClass)
             {
@@ -218,8 +200,8 @@ namespace DungeonsAndDumbDumbs
                 {
                     if (response == clazz.Item1.ToLower())
                     {
-                        playerClass = (Class)Activator.CreateInstance(clazz.Item2);
-                        Console.WriteLine($"You have selected \"{clazz.Item1}\", here is some information about that:\n\n{playerClass.classDescription}\n");
+                        player.characterClass = (Class)Activator.CreateInstance(clazz.Item2);
+                        Console.WriteLine($"You have selected \"{clazz.Item1}\", here is some information about that:\n\n{player.characterClass.classDescription}\n");
                         Console.Write($"Do you want your class to be {clazz.Item1}?: ");
                         if (CheckConfirmation())
                         {
@@ -229,150 +211,272 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
-            playerClass.PlayerCreation();
+            player.characterClass.PlayerCreation();
+        NotDecidedAbilityMethod:
             Console.Clear();
-            List<int> abilityValues = new List<int>();
-            for (int i = 0; i < 6; i++)
+            Console.Write("Do you want to use the \"Dice Roll\" or the \"Point Buy\" method of determining ability scores?: ");
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "dice roll")
             {
-                Console.Clear();
-                Console.WriteLine($"Rolling the dice to help determine ability scores. ({i + 1}/6)\n");
-                List<int> diceValues = RollDice(true, new Tuple<int, int>(4, 6));
-                diceValues.Sort();
-                diceValues.RemoveAt(0);
-                int diceTotal = 0;
-                foreach (int num in diceValues)
-                {
-                    diceTotal += num;
-                }
-                abilityValues.Add(diceTotal);
-                Console.WriteLine($"\nThe sum of the 3 highest dice rolls is {diceTotal}, this is one of the scores you will be able to pick from.\n");
-                Console.Write("Press Enter to Continue: ");
-                Console.ReadLine();
+                Console.WriteLine("\nThe Dice Roll method includes rolling 6 sets of 4D6, getting the sum of the 3 highest die in each set and allowing that to be a score.\n");
+            } else if (answer == "point buy")
+            {
+                Console.WriteLine("\nThe Point Buy method includes having all ability base scores at 8, then allowing you to spend 27 points increasing the scores.\n");
+            } else
+            {
+                goto NotDecidedAbilityMethod;
             }
-            bool selectedAbilityScores = false;
-            while (!selectedAbilityScores)
+            Console.Write("Do you want to use the selected method?: ");
+            if (!CheckConfirmation())
             {
-                Console.Clear();
-                Console.WriteLine("The next step is to choose what your ability scores are going to be.\n");
-                Console.Write("The scores you can choose from are: ");
-                int iterations = 1;
-                foreach (int value in abilityValues)
+                goto NotDecidedAbilityMethod;
+            }
+            if (answer == "point buy")
+            {
+                bool selectedAbilityScores = false;
+                while (!selectedAbilityScores)
                 {
-                    Console.Write(value);
-                    if (iterations != 6)
+                    int remainingPoints = 27;
+                    List<string> abilityNames = new List<string>() { "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma" };
+                    List<Tuple<string, int>> abilityScores = new List<Tuple<string, int>>();
+                    foreach (string name in abilityNames)
                     {
-                        Console.Write(", ");
-                    }
-                    else
-                    {
-                        Console.WriteLine(".\n");
-                    }
-                    iterations++;
-                }
-                List<string> abilityNames = new List<string>() { "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma" };
-                List<Tuple<string, int>> abilityScores = new List<Tuple<string, int>>();
-                List<int> remainingValues = new List<int>(abilityValues);
-                int values = 0;
-                foreach (int value in abilityValues)
-                {
-                    values++;
-                    if (values == 6)
-                    {
-                        int score = 0;
-                        foreach (int number in remainingValues)
-                        {
-                            score = number;
-                        }
-                        foreach (string name in abilityNames)
-                        {
-                            bool foundAbility = false;
-                            foreach (Tuple<string, int> ability in abilityScores)
-                            {
-                                if (ability.Item1 == name) 
-                                { 
-                                    foundAbility = true;
-                                    break;
-                                }
-                            }
-                            if (!foundAbility)
-                            {
-                                abilityScores.Add(new Tuple<string, int>(name, score));
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                    bool selectedAbility = false;
-                    while (!selectedAbility)
-                    {
+                        NotAllocatedPoints:
                         Console.Clear();
-                        Console.Write("The scores you have yet to assign are: ");
-                        iterations = 1;
-                        foreach (int remaining in remainingValues)
-                        {
-                            Console.Write(remaining);
-                            if (iterations != remainingValues.Count)
-                            {
-                                Console.Write(", ");
-                            }
-                            else
-                            {
-                                Console.WriteLine(".\n");
-                            }
-                            iterations++;
-                        }
-                        foreach (string name in abilityNames)
+                        Console.WriteLine($"Points Remaining: {remainingPoints}\n");
+                        foreach (string title in abilityNames)
                         {
                             bool foundAbility = false;
                             foreach (Tuple<string, int> ability in abilityScores)
                             {
-                                if (ability.Item1 == name)
+                                if (ability.Item1 == title)
                                 {
                                     Console.WriteLine($"{ability.Item1} - {ability.Item2}");
                                     foundAbility = true;
                                     break;
                                 }
                             }
-                            if (!foundAbility) Console.WriteLine(name);
+                            if (!foundAbility) Console.WriteLine(title);
                         }
-                        Console.Write($"\nWhich ability would you like to give a score of {value}?: ");
-                        string response = Console.ReadLine().ToLower();
-                        foreach (string name in abilityNames)
+                        Console.WriteLine("\n8");
+                        if (remainingPoints > 0) Console.WriteLine("9 (-1 Point)");
+                        if (remainingPoints > 1) Console.WriteLine("10 (-2 Points)");
+                        if (remainingPoints > 2) Console.WriteLine("11 (-3 Points)");
+                        if (remainingPoints > 3) Console.WriteLine("12 (-4 Points)");
+                        if (remainingPoints > 4) Console.WriteLine("13 (-5 Points)");
+                        if (remainingPoints > 6) Console.WriteLine("14 (-7 Points)");
+                        if (remainingPoints > 8) Console.WriteLine("15 (-9 Points)");
+                        Console.Write($"\nWhich option will you choose for {name}?: ");
+                        string response = Console.ReadLine();
+                        switch (response)
                         {
-                            if (response == name.ToLower())
+                            case "8":
+                                abilityScores.Add(new Tuple<string, int>(name, 8));
+                                break;
+                            case "9":
+                                if (remainingPoints < 1) goto NotAllocatedPoints;
+                                abilityScores.Add(new Tuple<string, int>(name, 9));
+                                remainingPoints--;
+                                break;
+                            case "10":
+                                if (remainingPoints < 2) goto NotAllocatedPoints;
+                                abilityScores.Add(new Tuple<string, int>(name, 10));
+                                remainingPoints -= 2;
+                                break;
+                            case "11":
+                                if (remainingPoints < 3) goto NotAllocatedPoints;
+                                abilityScores.Add(new Tuple<string, int>(name, 11));
+                                remainingPoints -= 3;
+                                break;
+                            case "12":
+                                if (remainingPoints < 4) goto NotAllocatedPoints;
+                                abilityScores.Add(new Tuple<string, int>(name, 12));
+                                remainingPoints -= 4;
+                                break;
+                            case "13":
+                                if (remainingPoints < 5) goto NotAllocatedPoints;
+                                abilityScores.Add(new Tuple<string, int>(name, 13));
+                                remainingPoints -= 5;
+                                break;
+                            case "14":
+                                if (remainingPoints < 7) goto NotAllocatedPoints;
+                                abilityScores.Add(new Tuple<string, int>(name, 14));
+                                remainingPoints -= 7;
+                                break;
+                            case "15":
+                                if (remainingPoints < 9) goto NotAllocatedPoints;
+                                abilityScores.Add(new Tuple<string, int>(name, 15));
+                                remainingPoints -= 9;
+                                break;
+                            default:
+                                goto NotAllocatedPoints;
+                        }
+                        if (abilityScores.Count == 6)
+                        {
+                            Console.Clear();
+                            foreach (Tuple<string, int> ability in abilityScores)
                             {
+                                Console.WriteLine($"{ability.Item1} - {ability.Item2}");
+                            }
+                            Console.Write("\nIs this how you want your abilities to be handled?: ");
+                            if (CheckConfirmation())
+                            {
+                                selectedAbilityScores = true;
                                 foreach (Tuple<string, int> ability in abilityScores)
                                 {
-                                    if (ability.Item1 == name)
-                                    {
-                                        goto ScoreAlreadyAdded;
-                                    }
+                                    AddAbilityScore(player, ability.Item1, ability.Item2);
                                 }
-                                abilityScores.Add(new Tuple<string, int>(name, value));
-                                remainingValues.Remove(value);
-                                selectedAbility = true;
-                                break;
-                            ScoreAlreadyAdded:
-                                break;
                             }
                         }
                     }
                 }
-                Console.Clear();
-                foreach (Tuple<string, int> ability in abilityScores)
+            } else if (answer == "dice roll")
+            {
+                List<int> abilityValues = new List<int>();
+                for (int i = 0; i < 6; i++)
                 {
-                    Console.WriteLine($"{ability.Item1} - {ability.Item2}");
+                    Console.Clear();
+                    Console.WriteLine($"Rolling the dice to help determine ability scores. ({i + 1}/6)\n");
+                    List<int> diceValues = RollDice(true, new Tuple<int, int>(4, 6));
+                    diceValues.Sort();
+                    diceValues.RemoveAt(0);
+                    int diceTotal = 0;
+                    foreach (int num in diceValues)
+                    {
+                        diceTotal += num;
+                    }
+                    abilityValues.Add(diceTotal);
+                    Console.WriteLine($"\nThe sum of the 3 highest dice rolls is {diceTotal}, this is one of the scores you will be able to pick from.\n");
+                    Console.Write("Press Enter to Continue: ");
+                    Console.ReadLine();
                 }
-                Console.Write("\nIs this how you want to assign your ability scores?: ");
-                if (CheckConfirmation())
+                bool selectedAbilityScores = false;
+                while (!selectedAbilityScores)
                 {
-                    selectedAbilityScores = true;
+                    Console.Clear();
+                    Console.WriteLine("The next step is to choose what your ability scores are going to be.\n");
+                    Console.Write("The scores you can choose from are: ");
+                    int iterations = 1;
+                    foreach (int value in abilityValues)
+                    {
+                        Console.Write(value);
+                        if (iterations != 6)
+                        {
+                            Console.Write(", ");
+                        }
+                        else
+                        {
+                            Console.WriteLine(".\n");
+                        }
+                        iterations++;
+                    }
+                    List<string> abilityNames = new List<string>() { "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma" };
+                    List<Tuple<string, int>> abilityScores = new List<Tuple<string, int>>();
+                    List<int> remainingValues = new List<int>(abilityValues);
+                    int values = 0;
+                    foreach (int value in abilityValues)
+                    {
+                        values++;
+                        if (values == 6)
+                        {
+                            int score = 0;
+                            foreach (int number in remainingValues)
+                            {
+                                score = number;
+                            }
+                            foreach (string name in abilityNames)
+                            {
+                                bool foundAbility = false;
+                                foreach (Tuple<string, int> ability in abilityScores)
+                                {
+                                    if (ability.Item1 == name)
+                                    {
+                                        foundAbility = true;
+                                        break;
+                                    }
+                                }
+                                if (!foundAbility)
+                                {
+                                    abilityScores.Add(new Tuple<string, int>(name, score));
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        bool selectedAbility = false;
+                        while (!selectedAbility)
+                        {
+                            Console.Clear();
+                            Console.Write("The scores you have yet to assign are: ");
+                            iterations = 1;
+                            foreach (int remaining in remainingValues)
+                            {
+                                Console.Write(remaining);
+                                if (iterations != remainingValues.Count)
+                                {
+                                    Console.Write(", ");
+                                }
+                                else
+                                {
+                                    Console.WriteLine(".\n");
+                                }
+                                iterations++;
+                            }
+                            foreach (string name in abilityNames)
+                            {
+                                bool foundAbility = false;
+                                foreach (Tuple<string, int> ability in abilityScores)
+                                {
+                                    if (ability.Item1 == name)
+                                    {
+                                        Console.WriteLine($"{ability.Item1} - {ability.Item2}");
+                                        foundAbility = true;
+                                        break;
+                                    }
+                                }
+                                if (!foundAbility) Console.WriteLine(name);
+                            }
+                            Console.Write($"\nWhich ability would you like to give a score of {value}?: ");
+                            string response = Console.ReadLine().ToLower();
+                            foreach (string name in abilityNames)
+                            {
+                                if (response == name.ToLower())
+                                {
+                                    foreach (Tuple<string, int> ability in abilityScores)
+                                    {
+                                        if (ability.Item1 == name)
+                                        {
+                                            goto ScoreAlreadyAdded;
+                                        }
+                                    }
+                                    abilityScores.Add(new Tuple<string, int>(name, value));
+                                    remainingValues.Remove(value);
+                                    selectedAbility = true;
+                                    break;
+                                ScoreAlreadyAdded:
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    Console.Clear();
                     foreach (Tuple<string, int> ability in abilityScores)
                     {
-                        AddAbilityScore(ability.Item1, ability.Item2);
+                        Console.WriteLine($"{ability.Item1} - {ability.Item2}");
+                    }
+                    Console.Write("\nIs this how you want to assign your ability scores?: ");
+                    if (CheckConfirmation())
+                    {
+                        selectedAbilityScores = true;
+                        foreach (Tuple<string, int> ability in abilityScores)
+                        {
+                            AddAbilityScore(player, ability.Item1, ability.Item2);
+                        }
                     }
                 }
             }
+            Console.Clear();
+            // TODO: Add Player's Character Sheet
             Console.ReadLine();
         }
 
@@ -446,61 +550,61 @@ namespace DungeonsAndDumbDumbs
             return returnList;
         }
 
-        public static void AddAbilityScore(string ability, int score)
+        public static void AddAbilityScore(LivingCreature creature, string ability, int score)
         {
             switch(ability)
             {
                 case "Strength":
-                    playerStrength += score;
+                    creature.strengthScore += score;
                     break;
                 case "Dexterity":
-                    playerDexterity += score;
+                    creature.dexterityScore += score;
                     break;
                 case "Constitution":
-                    playerConstitution += score;
+                    creature.constitutionScore += score;
                     break;
                 case "Intelligence":
-                    playerIntelligence += score;
+                    creature.intelligenceScore += score;
                     break;
                 case "Wisdom":
-                    playerWisdom += score;
+                    creature.wisdomScore += score;
                     break;
                 case "Charisma":
-                    playerCharisma += score;
+                    creature.charismaScore += score;
                     break;
                 case "All":
-                    playerStrength += score;
-                    playerDexterity += score;
-                    playerConstitution += score;
-                    playerIntelligence += score;
-                    playerWisdom += score;
-                    playerCharisma += score;
+                    creature.strengthScore += score;
+                    creature.dexterityScore += score;
+                    creature.constitutionScore += score;
+                    creature.intelligenceScore += score;
+                    creature.wisdomScore += score;
+                    creature.charismaScore += score;
                     break;
             }
         }
 
-        public static int GetAbilityModifier(string abilityName)
+        public static int GetAbilityModifier(LivingCreature creature, string abilityName)
         {
             int abilityScore = 1;
             switch (abilityName)
             {
                 case "Strength":
-                    abilityScore = playerStrength;
+                    abilityScore = creature.strengthScore;
                     break;
                 case "Dexterity":
-                    abilityScore = playerDexterity;
+                    abilityScore = creature.dexterityScore;
                     break;
                 case "Constitution":
-                    abilityScore = playerConstitution;
+                    abilityScore = creature.constitutionScore;
                     break;
                 case "Intelligence":
-                    abilityScore = playerIntelligence;
+                    abilityScore = creature.intelligenceScore;
                     break;
                 case "Wisdom":
-                    abilityScore = playerWisdom;
+                    abilityScore = creature.wisdomScore;
                     break;
                 case "Charisma":
-                    abilityScore = playerCharisma;
+                    abilityScore = creature.charismaScore;
                     break;
             }
             return Convert.ToInt32(Math.Floor(Convert.ToDouble((abilityScore - 10) / 2)));
@@ -524,11 +628,11 @@ namespace DungeonsAndDumbDumbs
             return diceValues;
         }
 
-        public static void AddProficiency(string proficiency)
+        public static void AddProficiency(LivingCreature creature, string proficiency)
         {
-            if (!playerProficiencies.Contains(proficiency))
+            if (!creature.proficiencies.Contains(proficiency))
             {
-                playerProficiencies.Add(proficiency);
+                creature.proficiencies.Add(proficiency);
             }
         }
 
