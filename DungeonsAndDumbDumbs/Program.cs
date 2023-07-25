@@ -9,6 +9,9 @@ namespace DungeonsAndDumbDumbs
     {
         // Meta-game Variables:
         public static Random RNG = new Random();
+        public static Dictionary<int, int> scoreToModifier = new Dictionary<int, int>() { { 1, -5 }, { 2, -4 }, { 3, -4 }, { 4, -3 }, { 5, -3 }, { 6, -2 }, { 7, -2 }, { 8, -1 }, { 9, -1 }, 
+            { 10, 0 }, { 11, 0 }, { 12, 1 }, { 13, 1 }, { 14, 2 }, { 15, 2 }, { 16, 3 }, { 17, 3 }, { 18, 4 }, { 19, 4 }, { 20, 5 }, { 21, 5 }, { 22, 6 }, { 23, 6 }, { 24, 7 }, { 25, 7 }, 
+            { 26, 8 }, { 27, 8 }, { 28, 9 }, { 29, 9 }, { 30, 10 } };
         public static List<string> confirmations = new List<string>() { "yes", "yep", "ok", "sure", "alright", "yeah", "y" };
         public static List<Tuple<string, Type>> allRaces = new List<Tuple<string, Type>>() { new Tuple<string, Type>("Dragonborn", typeof(Dragonborn)), 
             new Tuple<string, Type>("Hill Dwarf", typeof(HillDwarf)), new Tuple<string, Type>("Mountain Dwarf", typeof(MountainDwarf)), new Tuple<string, Type>("High Elf", typeof(HighElf)),
@@ -87,9 +90,13 @@ namespace DungeonsAndDumbDumbs
             [Description("Survival")]
             SURVIVAL
         }
-        public static List<Skill> allSkills = new List<Skill>() { Skill.ACROBATICS, Skill.ANIMALS, Skill.ARCANA, Skill.ATHLETICS, Skill.DECEPTION, Skill.HISTORY, Skill.INSIGHT,
-            Skill.INTIMIDATION, Skill.INVESTIGATION, Skill.MEDICINE, Skill.NATURE, Skill.PERCEPTION, Skill.PERFORMANCE, Skill.PERSUASION, Skill.RELIGION, Skill.SLEIGHTOFHAND, Skill.STEALTH,
-            Skill.SURVIVAL };
+        public static List<Tuple<Skill, string>> allSkillsAbilities = new List<Tuple<Skill, string>>() { new Tuple<Skill, string>(Skill.ACROBATICS, "Dexterity"),
+            new Tuple<Skill, string>(Skill.ANIMALS, "Wisdom"), new Tuple<Skill, string>(Skill.ARCANA, "Intelligence"), new Tuple<Skill, string>(Skill.ATHLETICS, "Strength"), 
+            new Tuple<Skill, string>(Skill.DECEPTION, "Charisma"), new Tuple<Skill, string>(Skill.HISTORY, "Intelligence"), new Tuple<Skill, string>(Skill.INSIGHT, "Wisdom"), 
+            new Tuple<Skill, string>(Skill.INTIMIDATION, "Charisma"), new Tuple<Skill, string>(Skill.INVESTIGATION, "Intelligence"), new Tuple<Skill, string>(Skill.MEDICINE, "Wisdom"), 
+            new Tuple<Skill, string>(Skill.NATURE, "Intelligence"), new Tuple<Skill, string>(Skill.PERCEPTION, "Wisdom"), new Tuple<Skill, string>(Skill.PERFORMANCE, "Charisma"), 
+            new Tuple<Skill, string>(Skill.PERSUASION, "Charisma"), new Tuple<Skill, string>(Skill.RELIGION, "Intelligence"), new Tuple<Skill, string>(Skill.SLEIGHTOFHAND, "Dexterity"), 
+            new Tuple<Skill, string>(Skill.STEALTH, "Dexterity"), new Tuple<Skill, string>(Skill.SURVIVAL, "Wisdom") };
         public enum DamageType
         {
 
@@ -475,8 +482,9 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
-            Console.Clear();
-            // TODO: Add Player's Character Sheet
+            player.maxHitPoints = player.CalculateHitPoints();
+            player.currentHitPoints = player.maxHitPoints;
+            player.ShowCharacterSheet();
             Console.ReadLine();
         }
 
@@ -583,31 +591,57 @@ namespace DungeonsAndDumbDumbs
             }
         }
 
+        public static int GetSavingThrowModifier(LivingCreature creature, string abilityName)
+        {
+            int modifier = GetAbilityModifier(creature, abilityName);
+            if (creature.proficiencies.Contains(abilityName)) modifier += creature.proficiencyBonus;
+            return modifier;
+        }
+
+        public static int GetSkillModifier(LivingCreature creature, string skillName)
+        {
+            foreach (Tuple<Skill, string> skillAbility in allSkillsAbilities)
+            {
+                if (GetDescription(skillAbility.Item1) == skillName)
+                {
+                    int modifier = GetAbilityModifier(creature, skillAbility.Item2);
+                    if (creature.proficiencies.Contains(skillName))
+                    {
+                        modifier += creature.proficiencyBonus;
+                        if (creature is PeacefulCreature)
+                        {
+                            PeacefulCreature peace = (PeacefulCreature)creature;
+                            if (peace.characterClass is Rogue)
+                            {
+                                Rogue rogue = (Rogue)peace.characterClass;
+                                if (rogue.doubleProficiency.Contains(skillName)) modifier += creature.proficiencyBonus;
+                            } // TODO: Dwarf Stonecunning
+                        }
+                    }
+                    return modifier;
+                }
+            }
+            return -99;
+        }
+
         public static int GetAbilityModifier(LivingCreature creature, string abilityName)
         {
-            int abilityScore = 1;
             switch (abilityName)
             {
                 case "Strength":
-                    abilityScore = creature.strengthScore;
-                    break;
+                    return scoreToModifier[creature.strengthScore];
                 case "Dexterity":
-                    abilityScore = creature.dexterityScore;
-                    break;
+                    return scoreToModifier[creature.dexterityScore];
                 case "Constitution":
-                    abilityScore = creature.constitutionScore;
-                    break;
+                    return scoreToModifier[creature.constitutionScore];
                 case "Intelligence":
-                    abilityScore = creature.intelligenceScore;
-                    break;
+                    return scoreToModifier[creature.intelligenceScore];
                 case "Wisdom":
-                    abilityScore = creature.wisdomScore;
-                    break;
+                    return scoreToModifier[creature.wisdomScore];
                 case "Charisma":
-                    abilityScore = creature.charismaScore;
-                    break;
+                    return scoreToModifier[creature.charismaScore];
             }
-            return Convert.ToInt32(Math.Floor(Convert.ToDouble((abilityScore - 10) / 2)));
+            return -99;
         }
 
         public static List<int> RollDice(bool displayValues, params Tuple<int, int>[] diceSets)

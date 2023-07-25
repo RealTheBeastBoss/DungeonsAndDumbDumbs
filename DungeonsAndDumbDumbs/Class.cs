@@ -134,18 +134,18 @@ namespace DungeonsAndDumbDumbs
             while (selectedSkills < 3)
             {
                 Console.Clear();
-                foreach (Program.Skill skill in Program.allSkills)
+                foreach (Tuple<Program.Skill, string> skill in Program.allSkillsAbilities)
                 {
-                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
-                    Console.WriteLine(Program.GetDescription(skill));
+                    if (Program.player.proficiencies.Contains(Program.GetDescription(skill.Item1))) continue;
+                    Console.WriteLine(Program.GetDescription(skill.Item1));
                 }
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
                 string response = Console.ReadLine().ToLower();
-                foreach (Program.Skill skill in Program.allSkills)
+                foreach (Tuple<Program.Skill, string> skill in Program.allSkillsAbilities)
                 {
-                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    if (!Program.player.proficiencies.Contains(Program.GetDescription(skill.Item1)) && response == Program.GetDescription(skill.Item1).ToLower())
                     {
-                        Program.AddProficiency(Program.player, Program.GetDescription(skill));
+                        Program.player.proficiencies.Add(Program.GetDescription(skill.Item1));
                         selectedSkills++;
                         break;
                     }
@@ -797,9 +797,9 @@ namespace DungeonsAndDumbDumbs
             }
             int selectedExpertises = 0;
             List<string> skillNames = new List<string>();
-            foreach (Program.Skill skill in Program.allSkills)
+            foreach (Tuple<Program.Skill, string> skill in Program.allSkillsAbilities)
             {
-                skillNames.Add(Program.GetDescription(skill));
+                skillNames.Add(Program.GetDescription(skill.Item1));
             }
             while (selectedExpertises < 2)
             {
