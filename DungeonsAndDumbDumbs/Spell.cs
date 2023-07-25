@@ -40,7 +40,15 @@ namespace DungeonsAndDumbDumbs
         {
 
         }
+        public static void BurningHands(int spellLevel)
+        {
+
+        }
         public static void CharmPerson(int spellLevel)
+        {
+
+        }
+        public static void ColourSpray(int spellLevel)
         {
 
         }
@@ -100,7 +108,15 @@ namespace DungeonsAndDumbDumbs
         {
 
         }
+        public static void MageArmour(int spellLevel)
+        {
+
+        }
         public static void MageHand(int spellLevel)
+        {
+
+        }
+        public static void MagicMissle(int spellLevel)
         {
 
         }
@@ -145,6 +161,14 @@ namespace DungeonsAndDumbDumbs
 
         }
         public static void Thaumaturgy(int spellLevel)
+        {
+
+        }
+        public static void ThunderWave(int spellLevel)
+        {
+
+        }
+        public static void TrueStrike(int spellLevel)
         {
 
         }

@@ -11,7 +11,7 @@ namespace DungeonsAndDumbDumbs
         public static Random RNG = new Random();
         public static List<string> confirmations = new List<string>() { "yes", "yep", "ok", "sure", "alright", "yeah", "y" };
         public static List<Tuple<string, Type>> allRaces = new List<Tuple<string, Type>>() { new Tuple<string, Type>("Dragonborn", typeof(Dragonborn)), 
-            new Tuple<string, Type>("Hill Dwarf", typeof(HillDwarf)), new Tuple<string, Type>("Mounain Dwarf", typeof(MountainDwarf)), new Tuple<string, Type>("High Elf", typeof(HighElf)),
+            new Tuple<string, Type>("Hill Dwarf", typeof(HillDwarf)), new Tuple<string, Type>("Mountain Dwarf", typeof(MountainDwarf)), new Tuple<string, Type>("High Elf", typeof(HighElf)),
             new Tuple<string, Type>("Wood Elf", typeof(WoodElf)), new Tuple<string, Type>("Rock Gnome", typeof(RockGnome)), new Tuple<string, Type>("Half-Elf", typeof(HalfElf)),
             new Tuple<string, Type>("Half-Orc", typeof(HalfOrc)), new Tuple<string, Type>("Lightfoot Halfling", typeof(LightHalfling)), 
             new Tuple<string, Type>("Stout Halfling", typeof(StoutHalfling)), new Tuple<string, Type>("Human", typeof(Human)), new Tuple<string, Type>("Variant Human", typeof(VariantHuman)),
@@ -42,7 +42,9 @@ namespace DungeonsAndDumbDumbs
             [Description("Infernal")]
             INFERNAL,
             [Description("Druidic")]
-            DRUIDIC
+            DRUIDIC,
+            [Description("Thieve's Cant")]
+            THIEVESCANT
         }
         public static List<Language> allLanguages = new List<Language>() { Language.COMMON, Language.DRACONIC, Language.DWARVISH, Language.ELVISH, Language.GNOMISH, Language.UNDERCOMMON, Language.ORC, 
             Language.HALFLING, Language.INFERNAL };
@@ -72,7 +74,7 @@ namespace DungeonsAndDumbDumbs
             NATURE,
             [Description("Perception")]
             PERCEPTION,
-            [Description("Preformance")]
+            [Description("Performance")]
             PERFORMANCE,
             [Description("Persuasion")]
             PERSUASION,
@@ -97,7 +99,10 @@ namespace DungeonsAndDumbDumbs
         public static Spell animalFriendship = new Spell("Animal Friendship", 1, Spell.AnimalFriendship, 30, "Charm a beast nearby to you for 24 hours.");
         public static Spell bane = new Spell("Bane", 1, Spell.Bane, 30, "Up to three creatures in range will need to subtract a D4 to an attack roll or saving throw on their next turn.");
         public static Spell bless = new Spell("Bless", 1, Spell.Bless, 30, "Up to three creatures in range will add a D4 to an attack roll or saving throw on their next turn.");
+        public static Spell burningHands = new Spell("Burning Hands", 1, Spell.BurningHands, 15, "Each creature within 15ft may take 3D6 fire damage. On higher levels, the damage increases by " +
+            "one D6 for each higher level.");
         public static Spell charmPerson = new Spell("Charm Person", 1, Spell.CharmPerson, 30, "Charm a nearby person for an hour. Once the spell is done, they know you cast it on them.");
+        public static Spell colourSpray = new Spell("Colour Spray", 1, Spell.ColourSpray, 15, "Creatures around you can get blinded.");
         public static Spell command = new Spell("Command", 1, Spell.Command, 60, "Send a one-word command to an enemy and they may spend their next turn following it.");
         public static Spell comprehendLanguage = new Spell("Comprehend Languages", 1, Spell.ComprehendLanguages, 1, "Cast this to be able to understand any language you hear/see for an hour.", true);
         public static Spell createOrDestroyWater = new Spell("Create or Destroy Water", 1, Spell.CreateDestroyWater, 30, "You are able to create or destroy up to 10 gallons of water" +
@@ -114,7 +119,10 @@ namespace DungeonsAndDumbDumbs
         public static Spell healingWord = new Spell("Healing Word", 1, Spell.HealingWord, 60, "Heals someone around you.");
         public static Spell inflictWounds = new Spell("Inflict Wounds", 1, Spell.InflictWounds, 1, "Melee attacks someone with 3 D10 Necrotic Damage.");
         public static Spell light = new Spell("Light", 0, Spell.Light, 1, "You touch an object around you. That object glows for about 40ft.");
+        public static Spell mageArmour = new Spell("Mage Armour", 1, Spell.MageArmour, 1, "Touching a willing creature who isn't wearing armour will increase their AC.");
         public static Spell mageHand = new Spell("Mage Hand", 0, Spell.MageHand, 30, "A spectral hand appears that you can control for your action.");
+        public static Spell magicMissile = new Spell("Magic Missile", 1, Spell.MagicMissle, 120, "Three magic missiles appear and you can send them at creatures in the area. They deal 1D4 + 1 " +
+            "damage each.\nAt higher levels, you get an additional missile for each extra level.");
         public static Spell mending = new Spell("Mending", 0, Spell.Mending, 1, "Touching an object will repair minor damage, but not restore magic.");
         public static Spell minorIllusion = new Spell("Minor Illusion", 0, Spell.MinorIllusion, 30, "You can cast an illusion that can attempt to confuse or distract an enemy.");
         public static Spell poisonSpray = new Spell("Poison Spray", 0, Spell.PoisonSpray, 10, "You extend your hand toward a creature you can see within range and project a puff of noxious gas from your palm.\n" +
@@ -128,17 +136,24 @@ namespace DungeonsAndDumbDumbs
         public static Spell shockingGrasp = new Spell("Shocking Grasp", 0, Spell.ShockingGrasp, 1, "You cause melee spell lightning damage to a nearby enemy.");
         public static Spell spareTheDying = new Spell("Spare the Dying", 0, Spell.SpareTheDying, 1, "Touching someone who is at 0HP, they become stable again.");
         public static Spell thaumaturgy = new Spell("Thaumaturgy", 0, Spell.Thaumaturgy, 30, "You can cause minor disturbances around you.");
-        public static List<Spell> allSpells = new List<Spell>() { animalFriendship, acidSplash, bane, bless, charmPerson, command, comprehendLanguage, createOrDestroyWater, cureWounds, 
-            dancingLights, detectGoodAndEvil, detectMagic, detectPoison, fireBolt, guidance, guidingBolt, healingWord, inflictWounds, light, mageHand, mending, minorIllusion, poisonSpray, 
-            prestidigitation, purifyFoodDrink, rayOfFrost, resistance, shieldOfFaith, shockingGrasp, spareTheDying };
-        public static List<Spell> wizardSpells = new List<Spell>() { acidSplash, charmPerson, comprehendLanguage, dancingLights, detectMagic, fireBolt, light, mageHand, mending, minorIllusion, 
-            poisonSpray, prestidigitation, rayOfFrost, shockingGrasp };
+        public static Spell thunderWave = new Spell("Thunderwave", 1, Spell.ThunderWave, 15, "Each creature within range may take 2D8 thunder damage, and be pushed 10ft away.\nAt higher levels, " +
+            "it will do an extra D8 of damage for each extra level.");
+        public static Spell trueStrike = new Spell("True Strike", 0, Spell.TrueStrike, 30, "You pick a target within range and you can see their defenses. You then get advantage on\n" +
+            "an attack roll if made next turn.");
+        public static List<Spell> allSpells = new List<Spell>() { animalFriendship, acidSplash, bane, bless, burningHands, charmPerson, colourSpray, command, comprehendLanguage, createOrDestroyWater, cureWounds, 
+            dancingLights, detectGoodAndEvil, detectMagic, detectPoison, fireBolt, guidance, guidingBolt, healingWord, inflictWounds, light, mageArmour, mageHand, magicMissile, mending, minorIllusion, poisonSpray, 
+            prestidigitation, purifyFoodDrink, rayOfFrost, resistance, shieldOfFaith, shockingGrasp, spareTheDying, thaumaturgy, thunderWave, trueStrike };
+        public static List<Spell> wizardSpells = new List<Spell>() { acidSplash, burningHands, charmPerson, colourSpray, comprehendLanguage, dancingLights, detectMagic, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
+            minorIllusion, poisonSpray, prestidigitation, rayOfFrost, shockingGrasp, thunderWave, trueStrike };
         public static List<Spell> bardSpells = new List<Spell>() { animalFriendship, bane, charmPerson, comprehendLanguage, cureWounds, dancingLights, detectMagic, healingWord, light, mageHand, mending, 
-            minorIllusion, prestidigitation };
+            minorIllusion, prestidigitation, thunderWave, trueStrike };
         public static List<Spell> clericSpells = new List<Spell>() { bane, bless, command, createOrDestroyWater, cureWounds, detectGoodAndEvil, detectMagic, detectPoison, guidance, guidingBolt, 
-            healingWord, inflictWounds, light, mending, purifyFoodDrink, resistance, shieldOfFaith, spareTheDying };
+            healingWord, inflictWounds, light, mending, purifyFoodDrink, resistance, shieldOfFaith, spareTheDying, thaumaturgy };
         public static List<Spell> druidSpells = new List<Spell>() { animalFriendship, charmPerson, createOrDestroyWater, cureWounds, detectMagic, detectPoison, guidance, healingWord, mending, 
-            poisonSpray, purifyFoodDrink, resistance };
+            poisonSpray, purifyFoodDrink, resistance, thunderWave };
+        public static List<Spell> sorcererSpells = new List<Spell>() { acidSplash, burningHands, colourSpray, dancingLights, charmPerson, comprehendLanguage, detectMagic, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
+            minorIllusion, poisonSpray, prestidigitation, rayOfFrost, shockingGrasp, thunderWave, trueStrike };
+        public static List<Spell> warlockSpells = new List<Spell>() { burningHands };
         // Player Variables:
         public static string playerName;
         public static Race playerRace;
@@ -216,6 +231,148 @@ namespace DungeonsAndDumbDumbs
             }
             playerClass.PlayerCreation();
             Console.Clear();
+            List<int> abilityValues = new List<int>();
+            for (int i = 0; i < 6; i++)
+            {
+                Console.Clear();
+                Console.WriteLine($"Rolling the dice to help determine ability scores. ({i + 1}/6)\n");
+                List<int> diceValues = RollDice(true, new Tuple<int, int>(4, 6));
+                diceValues.Sort();
+                diceValues.RemoveAt(0);
+                int diceTotal = 0;
+                foreach (int num in diceValues)
+                {
+                    diceTotal += num;
+                }
+                abilityValues.Add(diceTotal);
+                Console.WriteLine($"\nThe sum of the 3 highest dice rolls is {diceTotal}, this is one of the scores you will be able to pick from.\n");
+                Console.Write("Press Enter to Continue: ");
+                Console.ReadLine();
+            }
+            bool selectedAbilityScores = false;
+            while (!selectedAbilityScores)
+            {
+                Console.Clear();
+                Console.WriteLine("The next step is to choose what your ability scores are going to be.\n");
+                Console.Write("The scores you can choose from are: ");
+                int iterations = 1;
+                foreach (int value in abilityValues)
+                {
+                    Console.Write(value);
+                    if (iterations != 6)
+                    {
+                        Console.Write(", ");
+                    }
+                    else
+                    {
+                        Console.WriteLine(".\n");
+                    }
+                    iterations++;
+                }
+                List<string> abilityNames = new List<string>() { "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma" };
+                List<Tuple<string, int>> abilityScores = new List<Tuple<string, int>>();
+                List<int> remainingValues = new List<int>(abilityValues);
+                int values = 0;
+                foreach (int value in abilityValues)
+                {
+                    values++;
+                    if (values == 6)
+                    {
+                        int score = 0;
+                        foreach (int number in remainingValues)
+                        {
+                            score = number;
+                        }
+                        foreach (string name in abilityNames)
+                        {
+                            bool foundAbility = false;
+                            foreach (Tuple<string, int> ability in abilityScores)
+                            {
+                                if (ability.Item1 == name) 
+                                { 
+                                    foundAbility = true;
+                                    break;
+                                }
+                            }
+                            if (!foundAbility)
+                            {
+                                abilityScores.Add(new Tuple<string, int>(name, score));
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    bool selectedAbility = false;
+                    while (!selectedAbility)
+                    {
+                        Console.Clear();
+                        Console.Write("The scores you have yet to assign are: ");
+                        iterations = 1;
+                        foreach (int remaining in remainingValues)
+                        {
+                            Console.Write(remaining);
+                            if (iterations != remainingValues.Count)
+                            {
+                                Console.Write(", ");
+                            }
+                            else
+                            {
+                                Console.WriteLine(".\n");
+                            }
+                            iterations++;
+                        }
+                        foreach (string name in abilityNames)
+                        {
+                            bool foundAbility = false;
+                            foreach (Tuple<string, int> ability in abilityScores)
+                            {
+                                if (ability.Item1 == name)
+                                {
+                                    Console.WriteLine($"{ability.Item1} - {ability.Item2}");
+                                    foundAbility = true;
+                                    break;
+                                }
+                            }
+                            if (!foundAbility) Console.WriteLine(name);
+                        }
+                        Console.Write($"\nWhich ability would you like to give a score of {value}?: ");
+                        string response = Console.ReadLine().ToLower();
+                        foreach (string name in abilityNames)
+                        {
+                            if (response == name.ToLower())
+                            {
+                                foreach (Tuple<string, int> ability in abilityScores)
+                                {
+                                    if (ability.Item1 == name)
+                                    {
+                                        goto ScoreAlreadyAdded;
+                                    }
+                                }
+                                abilityScores.Add(new Tuple<string, int>(name, value));
+                                remainingValues.Remove(value);
+                                selectedAbility = true;
+                                break;
+                            ScoreAlreadyAdded:
+                                break;
+                            }
+                        }
+                    }
+                }
+                Console.Clear();
+                foreach (Tuple<string, int> ability in abilityScores)
+                {
+                    Console.WriteLine($"{ability.Item1} - {ability.Item2}");
+                }
+                Console.Write("\nIs this how you want to assign your ability scores?: ");
+                if (CheckConfirmation())
+                {
+                    selectedAbilityScores = true;
+                    foreach (Tuple<string, int> ability in abilityScores)
+                    {
+                        AddAbilityScore(ability.Item1, ability.Item2);
+                    }
+                }
+            }
             Console.ReadLine();
         }
 
@@ -240,6 +397,10 @@ namespace DungeonsAndDumbDumbs
                         canCapital = true;
                     }
                 }
+            }
+            if (returnName == startName)
+            {
+                return startName;
             }
             Console.Write($"Do you want the name to be formatted from \"{startName}\" to \"{returnName}\"?: ");
             if (CheckConfirmation())

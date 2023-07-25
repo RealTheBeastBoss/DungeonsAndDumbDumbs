@@ -749,20 +749,241 @@ namespace DungeonsAndDumbDumbs
     }
     class Rogue : Class
     {
+        public Tuple<int, int> sneakAttackDice = new Tuple<int, int>(1, 6);
+        public List<string> doubleProficiency = new List<string>();
         public Rogue()
         {
             className = "Rogue";
             classDescription = "A scoundrel who uses stealth and trickery to overcome obstacles and enemies.";
             primaryAbility = "Dexterity";
         }
+        public override void PlayerCreation()
+        {
+            Program.playerRace.languages.Add(Program.Language.THIEVESCANT);
+            Program.AddProficiency("Light Armour");
+            Program.AddProficiency("Simple Weapons");
+            Program.AddProficiency("Hand Crossbows");
+            Program.AddProficiency("Longswords");
+            Program.AddProficiency("Rapiers");
+            Program.AddProficiency("Shortswords");
+            Program.AddProficiency("Thieve's Tools");
+            Program.AddProficiency("Dexterity");
+            Program.AddProficiency("Intelligence");
+            int selectedSkills = 0;
+            List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ACROBATICS,  Program.Skill.ATHLETICS, Program.Skill.DECEPTION, Program.Skill.INSIGHT, 
+                Program.Skill.INTIMIDATION, Program.Skill.INVESTIGATION, Program.Skill.PERCEPTION, Program.Skill.PERFORMANCE, Program.Skill.PERSUASION, Program.Skill.SLEIGHTOFHAND, 
+                Program.Skill.STEALTH };
+            while (selectedSkills < 4)
+            {
+                Console.Clear();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    Console.WriteLine(Program.GetDescription(skill));
+                }
+                Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    {
+                        Program.AddProficiency(Program.GetDescription(skill));
+                        allowedSkills.Remove(skill);
+                        selectedSkills++;
+                        break;
+                    }
+                }
+            }
+            int selectedExpertises = 0;
+            List<string> skillNames = new List<string>();
+            foreach (Program.Skill skill in Program.allSkills)
+            {
+                skillNames.Add(Program.GetDescription(skill));
+            }
+            while (selectedExpertises < 2)
+            {
+                Console.Clear();
+                foreach (string proficiency in Program.playerProficiencies)
+                {
+                    if ((proficiency == "Thieve's Tools" || skillNames.Contains(proficiency)) && !doubleProficiency.Contains(proficiency))
+                    {
+                        Console.WriteLine(proficiency);
+                    }
+                }
+                Console.Write("\nWhich of these proficiencies would you like expertise in?: ");
+                string response = Console.ReadLine().ToLower();
+                if ((response == "thieve" || response == "thieve's tools") && !doubleProficiency.Contains("Thieve's Tools"))
+                {
+                    doubleProficiency.Add("Thieve's Tools");
+                    selectedExpertises++;
+                    continue;
+                }
+                foreach (string proficiency in Program.playerProficiencies)
+                {
+                    if (skillNames.Contains(proficiency) && !doubleProficiency.Contains(proficiency) && response == proficiency.ToLower())
+                    {
+                        doubleProficiency.Add(proficiency);
+                        selectedExpertises++;
+                        break;
+                    }
+                }
+            }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
+        }
     }
     class Sorcerer : Class
     {
+        public int sorceryPoints = 0;
+        public Dragonborn.DragonType draconicAncestor;
         public Sorcerer()
         {
             className = "Sorcerer";
             classDescription = "A spellcaster who draws on inherent magic from a gift or ancestry.";
             primaryAbility = "Charisma";
+        }
+        public override Tuple<int, int> CalculateHitDice()
+        {
+            return new Tuple<int, int>(Program.playerLevel, 6);
+        }
+        public override int CalculateHitPoints()
+        {
+            if (Program.playerLevel == 1)
+            {
+                return 7 + Program.GetAbilityModifier("Constitution");
+            }
+            else
+            {
+                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1)) + Program.playerLevel;
+            }
+        }
+        public override int CalculateArmourClass()
+        {
+            return 13 + Program.GetAbilityModifier("Dexterity"); // TODO: Not when wearing armour
+        }
+        public override void PlayerCreation()
+        {
+            Program.AddProficiency("Daggers");
+            Program.AddProficiency("Darts");
+            Program.AddProficiency("Slings");
+            Program.AddProficiency("Quaterstaffs");
+            Program.AddProficiency("Light Crossbows");
+            Program.AddProficiency("Constitution");
+            Program.AddProficiency("Charisma");
+            int selectedSkills = 0;
+            List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ARCANA, Program.Skill.DECEPTION, Program.Skill.INSIGHT,
+                Program.Skill.INTIMIDATION, Program.Skill.PERSUASION, Program.Skill.RELIGION };
+            while (selectedSkills < 2)
+            {
+                Console.Clear();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    Console.WriteLine(Program.GetDescription(skill));
+                }
+                Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    {
+                        Program.AddProficiency(Program.GetDescription(skill));
+                        allowedSkills.Remove(skill);
+                        selectedSkills++;
+                        break;
+                    }
+                }
+            }
+            bool selectedType = false;
+            while (!selectedType)
+            {
+                Console.Clear();
+                foreach (Dragonborn.DragonType type in Dragonborn.allTypes)
+                {
+                    Console.WriteLine($"{type.typeName} dragons are resistant to {type.damageResist.ToLower()} damage.\n");
+                }
+                Console.Write("Which colour dragon was your ancestors?: ");
+                string response = Console.ReadLine();
+                foreach (Dragonborn.DragonType type in Dragonborn.allTypes)
+                {
+                    if (response.ToLower() == type.typeName.ToLower())
+                    {
+                        Console.Write($"\nDo you want the colour of your dragon ancestors to be {type.typeName}?: ");
+                        if (Program.CheckConfirmation())
+                        {
+                            draconicAncestor = type;
+                            selectedType = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            int selectedCantrips = 0;
+            while (selectedCantrips < 4)
+            {
+                Console.Clear();
+                foreach (Spell spell in Program.sorcererSpells)
+                {
+                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    {
+                        Console.WriteLine(spell.spellName);
+                    }
+                }
+                Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Spell spell in Program.sorcererSpells)
+                {
+                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    {
+                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
+                        if (Program.CheckConfirmation())
+                        {
+                            Program.playerCantrips.Add(spell);
+                            selectedCantrips++;
+                            break;
+                        }
+                    }
+                }
+            }
+            int selectedSpells = 0;
+            while (selectedSpells < 2)
+            {
+                Console.Clear();
+                foreach (Spell spell in Program.sorcererSpells)
+                {
+                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    {
+                        Console.WriteLine(spell.spellName);
+                    }
+                }
+                Console.Write("\nWhich of these Spells do you want to know?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Spell spell in Program.sorcererSpells)
+                {
+                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    {
+                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
+                        if (Program.CheckConfirmation())
+                        {
+                            Program.playerKnownSpells.Add(spell);
+                            selectedSpells++;
+                            break;
+                        }
+                    }
+                }
+            }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 3 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(3, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
         }
     }
     class Warlock : Class
@@ -773,14 +994,219 @@ namespace DungeonsAndDumbDumbs
             classDescription = "A wielder of magic that is derived from a bargain with an extraplanar entity.";
             primaryAbility = "Charisma";
         }
+        public override void PlayerCreation()
+        {
+            Program.AddProficiency("Light Armour");
+            Program.AddProficiency("Simple Weapons");
+            Program.AddProficiency("Wisdom");
+            Program.AddProficiency("Charisma");
+            int selectedSkills = 0;
+            List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ARCANA, Program.Skill.DECEPTION, Program.Skill.HISTORY,
+                Program.Skill.INTIMIDATION, Program.Skill.INVESTIGATION, Program.Skill.NATURE, Program.Skill.RELIGION };
+            while (selectedSkills < 2)
+            {
+                Console.Clear();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    Console.WriteLine(Program.GetDescription(skill));
+                }
+                Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    {
+                        Program.AddProficiency(Program.GetDescription(skill));
+                        allowedSkills.Remove(skill);
+                        selectedSkills++;
+                        break;
+                    }
+                }
+            }
+            int selectedCantrips = 0;
+            while (selectedCantrips < 2)
+            {
+                Console.Clear();
+                foreach (Spell spell in Program.warlockSpells)
+                {
+                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    {
+                        Console.WriteLine(spell.spellName);
+                    }
+                }
+                Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Spell spell in Program.warlockSpells)
+                {
+                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    {
+                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
+                        if (Program.CheckConfirmation())
+                        {
+                            Program.playerCantrips.Add(spell);
+                            selectedCantrips++;
+                            break;
+                        }
+                    }
+                }
+            }
+            int selectedSpells = 0;
+            while (selectedSpells < 2)
+            {
+                Console.Clear();
+                foreach (Spell spell in Program.warlockSpells)
+                {
+                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    {
+                        Console.WriteLine(spell.spellName);
+                    }
+                }
+                Console.Write("\nWhich of these Spells do you want to know?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Spell spell in Program.warlockSpells)
+                {
+                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    {
+                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
+                        if (Program.CheckConfirmation())
+                        {
+                            Program.playerKnownSpells.Add(spell);
+                            selectedSpells++;
+                            break;
+                        }
+                    }
+                }
+            }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
+        }
     }
     class Wizard : Class
     {
+        public List<Spell> spellbook = new List<Spell>();
         public Wizard()
         {
             className = "Wizard";
             classDescription = "A scholarly magic-user capable of manipulating the structures of reality.";
             primaryAbility = "Intelligence";
+        }
+        public override void PlayerCreation()
+        {
+            Program.AddProficiency("Daggers");
+            Program.AddProficiency("Darts");
+            Program.AddProficiency("Slings");
+            Program.AddProficiency("Quarterstaffs");
+            Program.AddProficiency("Light Crossbows");
+            Program.AddProficiency("Intelligence");
+            Program.AddProficiency("Wisdom");
+            int selectedSkills = 0;
+            List<Program.Skill> allowedSkills = new List<Program.Skill>() { Program.Skill.ARCANA, Program.Skill.HISTORY, Program.Skill.INSIGHT, Program.Skill.INVESTIGATION, 
+                Program.Skill.MEDICINE, Program.Skill.RELIGION };
+            while (selectedSkills < 2)
+            {
+                Console.Clear();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (Program.playerProficiencies.Contains(Program.GetDescription(skill))) continue;
+                    Console.WriteLine(Program.GetDescription(skill));
+                }
+                Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Program.Skill skill in allowedSkills)
+                {
+                    if (!Program.playerProficiencies.Contains(Program.GetDescription(skill)) && response == Program.GetDescription(skill).ToLower())
+                    {
+                        Program.AddProficiency(Program.GetDescription(skill));
+                        allowedSkills.Remove(skill);
+                        selectedSkills++;
+                        break;
+                    }
+                }
+            }
+            int selectedCantrips = 0;
+            while (selectedCantrips < 3)
+            {
+                Console.Clear();
+                foreach (Spell spell in Program.wizardSpells)
+                {
+                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell))
+                    {
+                        Console.WriteLine(spell.spellName);
+                    }
+                }
+                Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Spell spell in Program.wizardSpells)
+                {
+                    if (spell.spellLevel == 0 && !Program.playerCantrips.Contains(spell) && response == spell.spellName.ToLower())
+                    {
+                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
+                        if (Program.CheckConfirmation())
+                        {
+                            Program.playerCantrips.Add(spell);
+                            selectedCantrips++;
+                            break;
+                        }
+                    }
+                }
+            }
+            int selectedSpells = 0;
+            while (selectedSpells < 6)
+            {
+                Console.Clear();
+                foreach (Spell spell in Program.wizardSpells)
+                {
+                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell))
+                    {
+                        Console.WriteLine(spell.spellName);
+                    }
+                }
+                Console.Write("\nWhich of these Spells do you want to know?: ");
+                string response = Console.ReadLine().ToLower();
+                foreach (Spell spell in Program.wizardSpells)
+                {
+                    if (spell.spellLevel == 1 && !Program.playerKnownSpells.Contains(spell) && response == spell.spellName.ToLower())
+                    {
+                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
+                        if (Program.CheckConfirmation())
+                        {
+                            Program.playerKnownSpells.Add(spell);
+                            selectedSpells++;
+                            break;
+                        }
+                    }
+                }
+            }
+            Console.Clear();
+            Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
+            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
+            Program.playerGold = diceRolled.Sum() * 10;
+            Console.WriteLine($"\nYou will begin with a total of {Program.playerGold} gp.");
+            Console.ReadLine();
+        }
+        public override Tuple<int, int> CalculateHitDice()
+        {
+            return new Tuple<int, int>(Program.playerLevel, 6);
+        }
+        public override int CalculateHitPoints()
+        {
+            if (Program.playerLevel == 1)
+            {
+                return 6 + Program.GetAbilityModifier("Constitution");
+            }
+            else
+            {
+                return diceRollLastLevel + (Program.GetAbilityModifier("Constitution") * (Program.playerLevel - 1));
+            }
         }
     }
 }
