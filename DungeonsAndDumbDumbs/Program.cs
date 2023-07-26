@@ -100,7 +100,32 @@ namespace DungeonsAndDumbDumbs
             new Tuple<Skill, string>(Skill.STEALTH, "Dexterity"), new Tuple<Skill, string>(Skill.SURVIVAL, "Wisdom") };
         public enum DamageType
         {
-
+            [Description("Acid")]
+            ACID,
+            [Description("Bludgeoning")]
+            BLUDGEONING,
+            [Description("Cold")]
+            COLD,
+            [Description("Fire")]
+            FIRE,
+            [Description("Force")]
+            FORCE,
+            [Description("Lightning")]
+            LIGHTNING,
+            [Description("Necrotic")]
+            NECROTIC,
+            [Description("Piercing")]
+            PIERCING,
+            [Description("Poison")]
+            POISON,
+            [Description("Psychic")]
+            PSYCHIC,
+            [Description("Radiant")]
+            RADIANT,
+            [Description("Slashing")]
+            SLASHING,
+            [Description("Thunder")]
+            THUNDER
         }
         public static Spell acidSplash = new Spell("Acid Splash", 0, Spell.AcidSplash, 60, "You hurl a bubble of acid. Choose one or two creatures you can see within range. " +
             "A target must succeed on a\nDexterity saving throw or take 1d6 acid damage.");

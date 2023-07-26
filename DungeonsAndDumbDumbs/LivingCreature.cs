@@ -18,7 +18,7 @@ namespace DungeonsAndDumbDumbs
         public List<Spell> knownSpells = new List<Spell>();
         public List<string> proficiencies = new List<string>();
         public int proficiencyBonus;
-        // TODO: Actions
+        public List<GameAction> actions = new List<GameAction>();
         // TODO: Effects
         public int strengthScore = 0;
         public int dexterityScore = 0;
@@ -58,6 +58,7 @@ namespace DungeonsAndDumbDumbs
     }
     class Player : PeacefulCreature
     {
+        public Location currentLocation;
         public Player()
         {
             proficiencyBonus = 2;
