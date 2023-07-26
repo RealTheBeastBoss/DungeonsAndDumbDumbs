@@ -58,12 +58,15 @@ namespace DungeonsAndDumbDumbs
                     Console.WriteLine($"{type.typeName} dragons are resistant to {type.damageResist.ToLower()} damage.\nThey can breath {type.damageResist.ToLower()} up to {type.breathDistance}ft away, " +
                         $"this requires enemies to make a {type.breathSaveThrow.ToLower()} saving throw.\n");
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Which colour dragon will you be?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine();
                 foreach (DragonType type in allTypes)
                 {
                     if (response.ToLower() == type.typeName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"\nDo you want the colour of your dragon to be {type.typeName}?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -96,7 +99,9 @@ namespace DungeonsAndDumbDumbs
             {
                 Console.Clear();
                 Console.WriteLine("Brewer's Supplies\nSmith's Tools\nMason's Tools\n");
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Which of these would you like proficiency with?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 if (response == "brewer" || response == "brewer's supplies")
                 {
@@ -133,7 +138,9 @@ namespace DungeonsAndDumbDumbs
             {
                 Console.Clear();
                 Console.WriteLine("Brewer's Supplies\nSmith's Tools\nMason's Tools\n");
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Which of these would you like proficiency with?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 if (response == "brewer" || response == "brewer's supplies")
                 {
@@ -179,13 +186,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich Cantrip do you want to be able to use?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine();
                 foreach (Spell spell in Program.wizardSpells)
                 {
                     if (spell.spellLevel == 0 && response.ToLower() == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -254,7 +265,9 @@ namespace DungeonsAndDumbDumbs
                 {
                     Console.WriteLine(ability);
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these abilities do you want to start better at?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (string ability in abilities)
                 {
@@ -276,7 +289,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill.Item1))) continue;
                     Console.WriteLine(Program.GetDescription(skill.Item1));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Tuple<Program.Skill, string> skill in Program.allSkillsAbilities)
                 {
@@ -299,7 +314,9 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(Program.GetDescription(language));
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these languages would you want to learn?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Language language in Program.allLanguages)
                 {
@@ -379,7 +396,9 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(Program.GetDescription(language));
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these languages would you want to learn?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Language language in Program.allLanguages)
                 {
@@ -414,7 +433,9 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(Program.GetDescription(language));
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these languages would you want to learn?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Language language in Program.allLanguages)
                 {
@@ -435,7 +456,9 @@ namespace DungeonsAndDumbDumbs
                 {
                     Console.WriteLine(ability);
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these abilities do you want to start better at?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (string ability in abilities)
                 {
@@ -457,7 +480,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill.Item1))) continue;
                     Console.WriteLine(Program.GetDescription(skill.Item1));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Tuple<Program.Skill, string> skill in Program.allSkillsAbilities)
                 {

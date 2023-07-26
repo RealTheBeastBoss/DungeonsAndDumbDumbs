@@ -7,6 +7,7 @@ namespace DungeonsAndDumbDumbs
 {
     class Program
     {
+        // Colour Code: Good - Green, Bad - Red, Game Info - Yellow, Player Input and Options - Blue, Prompt - Cyan
         // Meta-game Variables:
         public static Random RNG = new Random();
         public static Dictionary<int, int> scoreToModifier = new Dictionary<int, int>() { { 1, -5 }, { 2, -4 }, { 3, -4 }, { 4, -3 }, { 5, -3 }, { 6, -2 }, { 7, -2 }, { 8, -1 }, { 9, -1 }, 
@@ -165,7 +166,9 @@ namespace DungeonsAndDumbDumbs
 
         static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("What is the name of your character?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
             player.name = FormatName(Console.ReadLine());
             bool selectedRace = false;
             while (!selectedRace)
@@ -175,14 +178,18 @@ namespace DungeonsAndDumbDumbs
                 {
                     Console.WriteLine(race.Item1);
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these races do you wish to be?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine();
                 foreach (Tuple<string, Type> race in allRaces)
                 {
                     if (response.ToLower() == race.Item1.ToLower())
                     {
                         player.characterRace = (Race)Activator.CreateInstance(race.Item2);
-                        Console.WriteLine($"You've chosen the race \"{player.characterRace.raceName}\", here is some more information about them:\n\n{player.characterRace.infoText}\n");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"\nYou've chosen the race \"{player.characterRace.raceName}\", here is some more information about them:\n\n{player.characterRace.infoText}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write("Do you wish for this to be your race?: ");
                         if (CheckConfirmation())
                         {
@@ -197,18 +204,23 @@ namespace DungeonsAndDumbDumbs
             while (!selectedClass)
             {
                 Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Blue;
                 foreach (Tuple<string, Type> clazz in allClasses)
                 {
                     Console.WriteLine(clazz.Item1);
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these classes do you want to be?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Tuple<string, Type> clazz in allClasses)
                 {
                     if (response == clazz.Item1.ToLower())
                     {
                         player.characterClass = (Class)Activator.CreateInstance(clazz.Item2);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{clazz.Item1}\", here is some information about that:\n\n{player.characterClass.classDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want your class to be {clazz.Item1}?: ");
                         if (CheckConfirmation())
                         {
@@ -221,8 +233,11 @@ namespace DungeonsAndDumbDumbs
             player.characterClass.PlayerCreation();
         NotDecidedAbilityMethod:
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("Do you want to use the \"Dice Roll\" or the \"Point Buy\" method of determining ability scores?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
             string answer = Console.ReadLine().ToLower();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             if (answer == "dice roll")
             {
                 Console.WriteLine("\nThe Dice Roll method includes rolling 6 sets of 4D6, getting the sum of the 3 highest die in each set and allowing that to be a score.\n");
@@ -233,6 +248,7 @@ namespace DungeonsAndDumbDumbs
             {
                 goto NotDecidedAbilityMethod;
             }
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("Do you want to use the selected method?: ");
             if (!CheckConfirmation())
             {
@@ -250,6 +266,7 @@ namespace DungeonsAndDumbDumbs
                     {
                         NotAllocatedPoints:
                         Console.Clear();
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"Points Remaining: {remainingPoints}\n");
                         foreach (string title in abilityNames)
                         {
@@ -265,6 +282,7 @@ namespace DungeonsAndDumbDumbs
                             }
                             if (!foundAbility) Console.WriteLine(title);
                         }
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("\n8");
                         if (remainingPoints > 0) Console.WriteLine("9 (-1 Point)");
                         if (remainingPoints > 1) Console.WriteLine("10 (-2 Points)");
@@ -273,7 +291,9 @@ namespace DungeonsAndDumbDumbs
                         if (remainingPoints > 4) Console.WriteLine("13 (-5 Points)");
                         if (remainingPoints > 6) Console.WriteLine("14 (-7 Points)");
                         if (remainingPoints > 8) Console.WriteLine("15 (-9 Points)");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"\nWhich option will you choose for {name}?: ");
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         string response = Console.ReadLine();
                         switch (response)
                         {
@@ -321,10 +341,12 @@ namespace DungeonsAndDumbDumbs
                         if (abilityScores.Count == 6)
                         {
                             Console.Clear();
+                            Console.ForegroundColor = ConsoleColor.Yellow;
                             foreach (Tuple<string, int> ability in abilityScores)
                             {
                                 Console.WriteLine($"{ability.Item1} - {ability.Item2}");
                             }
+                            Console.ForegroundColor = ConsoleColor.Cyan;
                             Console.Write("\nIs this how you want your abilities to be handled?: ");
                             if (CheckConfirmation())
                             {
@@ -343,6 +365,7 @@ namespace DungeonsAndDumbDumbs
                 for (int i = 0; i < 6; i++)
                 {
                     Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"Rolling the dice to help determine ability scores. ({i + 1}/6)\n");
                     List<int> diceValues = RollDice(true, new Tuple<int, int>(4, 6));
                     diceValues.Sort();
@@ -353,7 +376,9 @@ namespace DungeonsAndDumbDumbs
                         diceTotal += num;
                     }
                     abilityValues.Add(diceTotal);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"\nThe sum of the 3 highest dice rolls is {diceTotal}, this is one of the scores you will be able to pick from.\n");
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     Console.Write("Press Enter to Continue: ");
                     Console.ReadLine();
                 }
@@ -361,9 +386,11 @@ namespace DungeonsAndDumbDumbs
                 while (!selectedAbilityScores)
                 {
                     Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("The next step is to choose what your ability scores are going to be.\n");
                     Console.Write("The scores you can choose from are: ");
                     int iterations = 1;
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     foreach (int value in abilityValues)
                     {
                         Console.Write(value);
@@ -414,6 +441,7 @@ namespace DungeonsAndDumbDumbs
                         while (!selectedAbility)
                         {
                             Console.Clear();
+                            Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.Write("The scores you have yet to assign are: ");
                             iterations = 1;
                             foreach (int remaining in remainingValues)
@@ -443,7 +471,9 @@ namespace DungeonsAndDumbDumbs
                                 }
                                 if (!foundAbility) Console.WriteLine(name);
                             }
+                            Console.ForegroundColor = ConsoleColor.Cyan;
                             Console.Write($"\nWhich ability would you like to give a score of {value}?: ");
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             string response = Console.ReadLine().ToLower();
                             foreach (string name in abilityNames)
                             {
@@ -467,10 +497,12 @@ namespace DungeonsAndDumbDumbs
                         }
                     }
                     Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     foreach (Tuple<string, int> ability in abilityScores)
                     {
                         Console.WriteLine($"{ability.Item1} - {ability.Item2}");
                     }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.Write("\nIs this how you want to assign your ability scores?: ");
                     if (CheckConfirmation())
                     {
@@ -514,6 +546,7 @@ namespace DungeonsAndDumbDumbs
             {
                 return startName;
             }
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write($"Do you want the name to be formatted from \"{startName}\" to \"{returnName}\"?: ");
             if (CheckConfirmation())
             {
@@ -524,6 +557,7 @@ namespace DungeonsAndDumbDumbs
 
         public static bool CheckConfirmation()
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
             List<string> responseWords = SplitIntoWords(Console.ReadLine());
             foreach (string word in responseWords)
             {
@@ -654,7 +688,21 @@ namespace DungeonsAndDumbDumbs
                     int diceFace = RNG.Next(1, set.Item2 + 1);
                     if (displayValues)
                     {
-                        Console.WriteLine($"You rolled a D{set.Item2} for a value of {diceFace}");
+                        if (diceFace == 1)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"You rolled a D{set.Item2} for a value of 1");
+                        }
+                        else if (diceFace == set.Item2)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"You rolled a D{set.Item2} for a value of {diceFace}");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"You rolled a D{set.Item2} for a value of {diceFace}");
+                        }
                     }
                     diceValues.Add(diceFace);
                 }

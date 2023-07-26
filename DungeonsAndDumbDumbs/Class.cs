@@ -73,7 +73,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -87,10 +89,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
             Program.player.gold = diceRolled.Sum() * 10;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.\n");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
         public override Tuple<int, int> CalculateHitDice()
@@ -139,7 +145,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill.Item1))) continue;
                     Console.WriteLine(Program.GetDescription(skill.Item1));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Tuple<Program.Skill, string> skill in Program.allSkillsAbilities)
                 {
@@ -162,13 +170,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.bardSpells)
                 {
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -190,13 +202,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Spells do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.bardSpells)
                 {
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -208,10 +224,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -242,7 +262,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -266,13 +288,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.clericSpells)
                 {
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -296,13 +322,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Spells do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.clericSpells)
                 {
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -314,10 +344,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -359,7 +393,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -383,13 +419,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.druidSpells)
                 {
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -411,13 +451,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Spells do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.druidSpells)
                 {
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -429,10 +473,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -498,7 +546,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -519,7 +569,9 @@ namespace DungeonsAndDumbDumbs
                 {
                     Console.WriteLine(Program.GetDescription(fightStyle) + "\n");
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich fighting style do you which to use?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (FightingStyle fightStyle in allFightStyles)
                 {
@@ -534,10 +586,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -573,7 +629,9 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(toolSet);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich tool set would you like to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (string toolSet in artisanTools)
                 {
@@ -597,7 +655,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -611,10 +671,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
             Program.player.gold = diceRolled.Sum();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -663,7 +727,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -677,10 +743,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -727,7 +797,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -741,10 +813,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -782,7 +858,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -811,7 +889,9 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(proficiency);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these proficiencies would you like expertise in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 if ((response == "thieve" || response == "thieve's tools") && !doubleProficiency.Contains("Thieve's Tools"))
                 {
@@ -830,10 +910,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -886,7 +970,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -907,12 +993,15 @@ namespace DungeonsAndDumbDumbs
                 {
                     Console.WriteLine($"{type.typeName} dragons are resistant to {type.damageResist.ToLower()} damage.\n");
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Which colour dragon was your ancestors?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine();
                 foreach (Dragonborn.DragonType type in Dragonborn.allTypes)
                 {
                     if (response.ToLower() == type.typeName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"\nDo you want the colour of your dragon ancestors to be {type.typeName}?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -934,13 +1023,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.sorcererSpells)
                 {
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -962,13 +1055,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Spells do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.sorcererSpells)
                 {
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -980,10 +1077,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 3 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(3, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -1012,7 +1113,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -1036,13 +1139,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.warlockSpells)
                 {
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -1064,13 +1171,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Spells do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.warlockSpells)
                 {
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -1082,10 +1193,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -1118,7 +1233,9 @@ namespace DungeonsAndDumbDumbs
                     if (Program.player.proficiencies.Contains(Program.GetDescription(skill))) continue;
                     Console.WriteLine(Program.GetDescription(skill));
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these skills do you want to be proficient in?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Program.Skill skill in allowedSkills)
                 {
@@ -1142,13 +1259,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Cantrips do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.wizardSpells)
                 {
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -1170,13 +1291,17 @@ namespace DungeonsAndDumbDumbs
                         Console.WriteLine(spell.spellName);
                     }
                 }
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nWhich of these Spells do you want to know?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
                 string response = Console.ReadLine().ToLower();
                 foreach (Spell spell in Program.wizardSpells)
                 {
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
                         {
@@ -1188,10 +1313,14 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
             List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
             Program.player.gold = diceRolled.Sum() * 10;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Press Enter to Continue: ");
             Console.ReadLine();
         }
         public override Tuple<int, int> CalculateHitDice()
