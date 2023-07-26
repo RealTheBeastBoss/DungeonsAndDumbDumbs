@@ -65,6 +65,7 @@ namespace DungeonsAndDumbDumbs
         public void ShowCharacterSheet() // TODO: Add Senses
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             string inspired = isInspired ? "Currently Inspired" : "Not Inspired";
             Console.WriteLine($"Character Sheet for {name}:\n");
             Console.WriteLine($"{characterRace.raceName} {characterClass.className} at Level {characterClass.classLevel}. Strength: {strengthScore} ({Program.GetAbilityModifier(this, "Strength")}) " +
@@ -97,6 +98,7 @@ namespace DungeonsAndDumbDumbs
             {
                 Console.WriteLine(Program.GetDescription(language));
             }
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }

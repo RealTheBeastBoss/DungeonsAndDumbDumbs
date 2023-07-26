@@ -195,7 +195,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 0 && response.ToLower() == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())

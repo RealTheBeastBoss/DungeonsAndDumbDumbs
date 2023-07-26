@@ -219,7 +219,7 @@ namespace DungeonsAndDumbDumbs
                     {
                         player.characterClass = (Class)Activator.CreateInstance(clazz.Item2);
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{clazz.Item1}\", here is some information about that:\n\n{player.characterClass.classDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{clazz.Item1}\", here is some information about that:\n\n{player.characterClass.classDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want your class to be {clazz.Item1}?: ");
                         if (CheckConfirmation())
@@ -378,7 +378,7 @@ namespace DungeonsAndDumbDumbs
                     abilityValues.Add(diceTotal);
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"\nThe sum of the 3 highest dice rolls is {diceTotal}, this is one of the scores you will be able to pick from.\n");
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.Write("Press Enter to Continue: ");
                     Console.ReadLine();
                 }

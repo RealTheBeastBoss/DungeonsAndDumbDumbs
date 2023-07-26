@@ -96,7 +96,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.\n");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
         public override Tuple<int, int> CalculateHitDice()
@@ -179,7 +179,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
@@ -211,7 +211,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
@@ -231,7 +231,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -297,7 +297,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
@@ -331,7 +331,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
@@ -351,7 +351,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -428,7 +428,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
@@ -460,7 +460,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
@@ -480,7 +480,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -593,7 +593,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -678,7 +678,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -750,7 +750,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -820,7 +820,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -917,7 +917,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -1032,7 +1032,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
@@ -1064,7 +1064,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
@@ -1084,7 +1084,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -1148,7 +1148,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
@@ -1180,7 +1180,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
@@ -1200,7 +1200,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
     }
@@ -1268,7 +1268,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 0 && !Program.player.cantrips.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Cantrip?: ");
                         if (Program.CheckConfirmation())
@@ -1300,7 +1300,7 @@ namespace DungeonsAndDumbDumbs
                     if (spell.spellLevel == 1 && !Program.player.knownSpells.Contains(spell) && response == spell.spellName.ToLower())
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
+                        Console.WriteLine($"\nYou have selected \"{spell.spellName}\", here is some information on the spell:\n\n{spell.spellDescription}\n");
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write($"Do you want to have {spell.spellName} as your Spell?: ");
                         if (Program.CheckConfirmation())
@@ -1320,7 +1320,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Press Enter to Continue: ");
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
         }
         public override Tuple<int, int> CalculateHitDice()
