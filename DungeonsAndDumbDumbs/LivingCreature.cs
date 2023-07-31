@@ -19,6 +19,9 @@ namespace DungeonsAndDumbDumbs
         public List<string> proficiencies = new List<string>();
         public int proficiencyBonus;
         public List<GameAction> actions = new List<GameAction>();
+        public List<Program.DamageType> immunities = new List<Program.DamageType>();
+        public List<Program.DamageType> resistances = new List<Program.DamageType>();
+        public List<Program.DamageType> vunerabilities = new List<Program.DamageType>();
         // TODO: Effects
         public int strengthScore = 0;
         public int dexterityScore = 0;
@@ -29,6 +32,8 @@ namespace DungeonsAndDumbDumbs
         public int maxHitPoints;
         public int currentHitPoints;
         public int tempHitPoints;
+        public Location currentLocation;
+        public Tuple<int, int> position;
     }
     class PeacefulCreature : LivingCreature
     {
@@ -38,14 +43,22 @@ namespace DungeonsAndDumbDumbs
         public int silver = 0;
         public int copper = 0;
         public bool isInspired = false;
-        // TODO: Inventory
+        public List<Equipment> inventory = new List<Equipment>();
+        public Armour wornArmour;
+        public bool hasShield = false;
         public PeacefulCreature()
         {
             languages.Add(Program.Language.COMMON);
         }
         public int CalculateArmourClass()
         {
-            return characterClass.CalculateArmourClass();
+            int shieldAC = 0;
+            if (hasShield) shieldAC += Program.shield.baseArmourClass;
+            if (wornArmour != null)
+            {
+                return shieldAC + wornArmour.CalculateArmourClass(this);
+            }
+            return shieldAC + characterClass.CalculateArmourClass();
         }
         public Tuple<int, int> CalculateHitDice()
         {
@@ -58,7 +71,6 @@ namespace DungeonsAndDumbDumbs
     }
     class Player : PeacefulCreature
     {
-        public Location currentLocation;
         public Player()
         {
             proficiencyBonus = 2;
@@ -69,7 +81,7 @@ namespace DungeonsAndDumbDumbs
             Console.ForegroundColor = ConsoleColor.Yellow;
             string inspired = isInspired ? "Currently Inspired" : "Not Inspired";
             Console.WriteLine($"Character Sheet for {name}:\n");
-            Console.WriteLine($"{characterRace.raceName} {characterClass.className} at Level {characterClass.classLevel}. Strength: {strengthScore} ({Program.GetAbilityModifier(this, "Strength")}) " +
+            Console.WriteLine($"{characterRace.raceName} {characterClass.className} at Level {characterClass.classLevel} with {experiencePoints}XP. Strength: {strengthScore} ({Program.GetAbilityModifier(this, "Strength")}) " +
                 $"| Dexterity: {dexterityScore} ({Program.GetAbilityModifier(this, "Dexterity")}) | Constitution: {constitutionScore} ({Program.GetAbilityModifier(this, "Constitution")}) " +
                 $"| Intelligence: {intelligenceScore} ({Program.GetAbilityModifier(this, "Intelligence")}) | Wisdom: {wisdomScore} ({Program.GetAbilityModifier(this, "Wisdom")}) " +
                 $"| Charisma: {charismaScore} ({Program.GetAbilityModifier(this, "Charisma")})\n");

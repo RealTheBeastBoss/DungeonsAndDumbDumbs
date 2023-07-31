@@ -88,16 +88,93 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+            NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.\n");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            } else if (answer == "equipment")
+            {
+                bool selectedMartialMeleeWeapon = false;
+                while (!selectedMartialMeleeWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allMartialMeleeWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you wish to own?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    foreach (Weapon weapon in Program.allMartialMeleeWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedMartialMeleeWeapon = true;
+                            break;
+                        }
+                    }
+                }
+                bool selectedSimpleWeapon = false;
+                while (!selectedSimpleWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (weapon != Program.handAxe)
+                        {
+                            Console.WriteLine(weapon.equipmentName);
+                        } else
+                        {
+                            Console.WriteLine("2 Hand Axes");
+                        }
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedSimpleWeapon = true;
+                            if (weapon == Program.handAxe)
+                            {
+                                Program.player.inventory.Add(weapon);
+                            }
+                            break;
+                        }
+                    }
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    Program.player.inventory.Add(Program.javelin);
+                }
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained 10 Javelins");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            } else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
         public override Tuple<int, int> CalculateHitDice()
         {
@@ -223,16 +300,73 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                bool selectedSimpleWeapon = false;
+                while (!selectedSimpleWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.WriteLine(Program.rapier.equipmentName);
+                    Console.WriteLine(Program.longSword.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon would you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.rapier.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.rapier);
+                        break;
+                    } else if (choice == Program.longSword.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.longSword);
+                        break;
+                    } else
+                    {
+                        foreach (Weapon weapon in Program.allSimpleWeapons)
+                        {
+                            if (choice == weapon.equipmentName.ToLower())
+                            {
+                                Program.player.inventory.Add(weapon);
+                                selectedSimpleWeapon = true;
+                            }
+                        }
+                    }
+                }
+                Program.player.inventory.Add(Program.leather);
+                Program.player.inventory.Add(Program.dagger);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained Leather Armour and a Dagger");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Cleric : Class
@@ -343,16 +477,95 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            } else if (answer == "equipment")
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine(Program.scaleMail.equipmentName);
+                    Console.WriteLine(Program.leather.equipmentName);
+                    Console.WriteLine(Program.chainMail.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich armour do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.scaleMail.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.scaleMail);
+                        break;
+                    } else if (choice == Program.leather.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.leather);
+                        break;
+                    } else if (choice == Program.chainMail.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.chainMail);
+                        break;
+                    }
+                }
+                bool selectedSimpleWeapon = false;
+                while (!selectedSimpleWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (weapon == Program.lightCrossbow)
+                        {
+                            Console.WriteLine($"{weapon.equipmentName} + 20 Crossbow Bolts");
+                        } else
+                        {
+                            Console.WriteLine(weapon.equipmentName);
+                        }
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedSimpleWeapon = true;
+                            if (weapon == Program.lightCrossbow)
+                            {
+                                for (int i = 0; i < 20; i++)
+                                {
+                                    Program.player.inventory.Add(Program.crossbowBolt);
+                                }
+                            }
+                        }
+                    }
+                }
+                Program.player.inventory.Add(Program.mace);
+                Program.player.inventory.Add(Program.shield);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained a Mace and a Shield");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            } else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Druid : Class
@@ -472,16 +685,92 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 2 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(2, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                bool selectedSimpleWeapon = false;
+                while (!selectedSimpleWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.WriteLine(Program.shield.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.shield.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.shield);
+                        break;
+                    }
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedSimpleWeapon = true;
+                        }
+                    }
+                }
+                bool selectedSimpleMeleeWeapon = false;
+                while (!selectedSimpleMeleeWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleMeleeWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.WriteLine(Program.scimitar.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.scimitar.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.scimitar);
+                        break;
+                    }
+                    foreach (Weapon weapon in Program.allSimpleMeleeWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedSimpleMeleeWeapon = true;
+                        }
+                    }
+                }
+                Program.player.inventory.Add(Program.leather);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained Leather Armour");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Fighter : Class
@@ -585,16 +874,111 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine(Program.chainMail.equipmentName);
+                    Console.WriteLine($"{Program.leather.equipmentName}, {Program.longBow.equipmentName}, and 20 Arrows");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich option do you want to choose?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.chainMail.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.chainMail);
+                        break;
+                    }
+                    else if (choice == Program.leather.equipmentName.ToLower() || choice == Program.longBow.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.leather);
+                        Program.player.inventory.Add(Program.longBow);
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Program.player.inventory.Add(Program.arrow);
+                        }
+                    }
+                }
+                int selectedMartialWeapons = 0;
+                while (selectedMartialWeapons < 2)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allMartialWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    if (selectedMartialWeapons == 1) Console.WriteLine(Program.shield.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich would you like to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (selectedMartialWeapons == 1 && choice == Program.shield.equipmentName.ToLower()) 
+                    { 
+                        Program.player.inventory.Add(Program.shield);
+                        break;
+                    }
+                    foreach (Weapon weapon in Program.allMartialWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedMartialWeapons++;
+                            break;
+                        }
+                    }
+                }
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Two Handaxes");
+                    Console.WriteLine($"{Program.lightCrossbow.equipmentName} + 20 Crossbow Bolts");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich option do you want to choose?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.handAxe.equipmentName.ToLower() || choice == "handaxes")
+                    {
+                        Program.player.inventory.Add(Program.handAxe);
+                        Program.player.inventory.Add(Program.handAxe);
+                        break;
+                    }
+                    else if (choice == Program.lightCrossbow.equipmentName.ToLower() || choice == "crossbow")
+                    {
+                        Program.player.inventory.Add(Program.lightCrossbow);
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Program.player.inventory.Add(Program.crossbowBolt);
+                        }
+                    }
+                }
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Monk : Class
@@ -670,16 +1054,68 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.player.gold = diceRolled.Sum();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+                Program.player.gold = diceRolled.Sum();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                bool selectedSimpleWeapon = false;
+                while (!selectedSimpleWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.WriteLine(Program.shortSword.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.shortSword.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.shortSword);
+                        break;
+                    }
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedSimpleWeapon = true;
+                        }
+                    }
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    Program.player.inventory.Add(Program.dart);
+                }
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained 10 Darts");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Paladin : Class
@@ -742,16 +1178,100 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                int selectedMartialWeapons = 0;
+                while (selectedMartialWeapons < 2)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allMartialWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    if (selectedMartialWeapons == 1) Console.WriteLine(Program.shield.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich would you like to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (selectedMartialWeapons == 1 && choice == Program.shield.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.shield);
+                        break;
+                    }
+                    foreach (Weapon weapon in Program.allMartialWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedMartialWeapons++;
+                            break;
+                        }
+                    }
+                }
+                bool selectedSimpleMeleeWeapon = false;
+                while (!selectedSimpleMeleeWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleMeleeWeapons)
+                    {
+                        if (weapon == Program.javelin)
+                        {
+                            Console.WriteLine("Five Javelins");
+                            continue;
+                        }
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.javelin.equipmentName.ToLower() || choice == "javelins" || choice == "five javelins")
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Program.player.inventory.Add(Program.javelin);
+                        }
+                        break;
+                    }
+                    foreach (Weapon weapon in Program.allSimpleMeleeWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedSimpleMeleeWeapon = true;
+                        }
+                    }
+                }
+                Program.player.inventory.Add(Program.chainMail);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained Chain Mail Armour");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Ranger : Class
@@ -812,16 +1332,91 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 5 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(5, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine(Program.scaleMail.equipmentName);
+                    Console.WriteLine(Program.leather.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich armour do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.scaleMail.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.scaleMail);
+                        break;
+                    }
+                    else if (choice == Program.leather.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.leather);
+                        break;
+                    }
+                }
+                int selectedSimpleMeleeWeapons = 0;
+                while (selectedSimpleMeleeWeapons < 2)
+                {
+                    Console.Clear();
+                    if (selectedSimpleMeleeWeapons == 0) Console.WriteLine("Two Shortswords");
+                    foreach (Weapon weapon in Program.allSimpleMeleeWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you wish to start with?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (selectedSimpleMeleeWeapons == 1 && (choice == "shortsword" || choice == "shortswords" || choice == "two shortswords"))
+                    {
+                        Program.player.inventory.Add(Program.shortSword);
+                        Program.player.inventory.Add(Program.shortSword);
+                        break;
+                    }
+                    foreach (Weapon weapon in Program.allSimpleMeleeWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedSimpleMeleeWeapons++;
+                            break;
+                        }
+                    }
+                }
+                Program.player.inventory.Add(Program.longBow);
+                for (int i = 0; i < 20; i++)
+                {
+                    Program.player.inventory.Add(Program.arrow);
+                }
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained a Longbow and 20 Arrows");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Rogue : Class
@@ -909,16 +1504,85 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine(Program.rapier.equipmentName);
+                    Console.WriteLine(Program.shortSword.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.rapier.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.rapier);
+                        break;
+                    }
+                    else if (choice == Program.shortSword.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.shortSword);
+                        break;
+                    }
+                }
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Shortbow and 20 Arrows");
+                    Console.WriteLine(Program.shortSword.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == "shortbow" || choice == "shortbow and 20 arrows" || choice == "arrows")
+                    {
+                        Program.player.inventory.Add(Program.shortbow);
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Program.player.inventory.Add(Program.arrow);
+                        }
+                        break;
+                    }
+                    else if (choice == Program.shortSword.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.shortSword);
+                        break;
+                    }
+                }
+                Program.player.inventory.Add(Program.leather);
+                Program.player.inventory.Add(Program.dagger);
+                Program.player.inventory.Add(Program.dagger);
+                Program.player.inventory.Add(Program.thievesTools);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained Leather Armour, Two Daggers, and a set of Thieve's Tools");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Sorcerer : Class
@@ -991,7 +1655,7 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (Dragonborn.DragonType type in Dragonborn.allTypes)
                 {
-                    Console.WriteLine($"{type.typeName} dragons are resistant to {type.damageResist.ToLower()} damage.\n");
+                    Console.WriteLine($"{type.typeName} dragons are resistant to {Program.GetDescription(type.damageResist).ToLower()} damage.\n");
                 }
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Which colour dragon was your ancestors?: ");
@@ -1006,6 +1670,7 @@ namespace DungeonsAndDumbDumbs
                         if (Program.CheckConfirmation())
                         {
                             draconicAncestor = type;
+                            Program.player.resistances.Add(type.damageResist);
                             selectedType = true;
                             break;
                         }
@@ -1076,16 +1741,72 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 3 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(3, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 3 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(3, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                bool selectedSimpleWeapon = false;
+                while (!selectedSimpleWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (weapon == Program.lightCrossbow)
+                        {
+                            Console.WriteLine("Light Crossbow and 20 Crossbow Bolts");
+                            continue;
+                        }
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            if (weapon == Program.lightCrossbow)
+                            {
+                                for (int i = 0; i < 20; i++)
+                                {
+                                    Program.player.inventory.Add(Program.arrow);
+                                }
+                            }
+                            selectedSimpleWeapon = true;
+                        }
+                    }
+                }
+                Program.player.inventory.Add(Program.dagger);
+                Program.player.inventory.Add(Program.dagger);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained two Daggers");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Warlock : Class
@@ -1192,16 +1913,94 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                bool selectedSimpleWeapon = false;
+                while (!selectedSimpleWeapon)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (weapon == Program.lightCrossbow)
+                        {
+                            Console.WriteLine("Light Crossbow and 20 Crossbow Bolts");
+                            continue;
+                        }
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            if (weapon == Program.lightCrossbow)
+                            {
+                                for (int i = 0; i < 20; i++)
+                                {
+                                    Program.player.inventory.Add(Program.arrow);
+                                }
+                            }
+                            selectedSimpleWeapon = true;
+                        }
+                    }
+                }
+                bool selectedSimpleWeapons = false;
+                while (!selectedSimpleWeapons)
+                {
+                    Console.Clear();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        Console.WriteLine(weapon.equipmentName);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich weapon would you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    foreach (Weapon weapon in Program.allSimpleWeapons)
+                    {
+                        if (choice == weapon.equipmentName.ToLower())
+                        {
+                            Program.player.inventory.Add(weapon);
+                            selectedSimpleWeapon = true;
+                        }
+                    }
+                }
+                Program.player.inventory.Add(Program.dagger);
+                Program.player.inventory.Add(Program.dagger);
+                Program.player.inventory.Add(Program.leather);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nYou also gained Leather Armour and two Daggers");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
     }
     class Wizard : Class
@@ -1312,16 +2111,55 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+        NotDecidedStartingGear:
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
-            List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
-            Program.player.gold = diceRolled.Sum() * 10;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
+            Console.Write("Do you want to start with gold or equipment?: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "gold")
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Determining Starting Gold: Rolling 4 D4s...\n");
+                List<int> diceRolled = Program.RollDice(true, new Tuple<int, int>(4, 4));
+                Program.player.gold = diceRolled.Sum() * 10;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nYou will begin with a total of {Program.player.gold} gp.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else if (answer == "equipment")
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine(Program.quarterStaff.equipmentName);
+                    Console.WriteLine(Program.dagger.equipmentName);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("\nWhich armour do you want to have?: ");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    string choice = Console.ReadLine().ToLower();
+                    if (choice == Program.quarterStaff.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.quarterStaff);
+                        break;
+                    }
+                    else if (choice == Program.dagger.equipmentName.ToLower())
+                    {
+                        Program.player.inventory.Add(Program.dagger);
+                        break;
+                    }
+                }
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nPress Enter to Continue: ");
+                Console.ReadLine();
+            }
+            else
+            {
+                goto NotDecidedStartingGear;
+            }
         }
         public override Tuple<int, int> CalculateHitDice()
         {

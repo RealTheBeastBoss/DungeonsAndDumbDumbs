@@ -17,10 +17,10 @@ namespace DungeonsAndDumbDumbs
         public class DragonType
         {
             public string typeName;
-            public string damageResist;
+            public Program.DamageType damageResist;
             public int breathDistance;
             public string breathSaveThrow;
-            public DragonType(string name, string damage, int distance, string save)
+            public DragonType(string name, Program.DamageType damage, int distance, string save)
             {
                 typeName = name;
                 damageResist = damage;
@@ -28,16 +28,16 @@ namespace DungeonsAndDumbDumbs
                 breathSaveThrow = save;
             }
         }
-        public static DragonType black = new DragonType("Black", "Acid", 30, "Dexterity");
-        public static DragonType blue = new DragonType("Blue", "Lightning", 30, "Dexterity");
-        public static DragonType brass = new DragonType("Brass", "Fire", 30, "Dexterity");
-        public static DragonType bronze = new DragonType("Bronze", "Lightning", 30, "Dexterity");
-        public static DragonType copper = new DragonType("Copper", "Acid", 30, "Dexterity");
-        public static DragonType gold = new DragonType("Gold", "Fire", 15, "Dexterity");
-        public static DragonType green = new DragonType("Green", "Poison", 15, "Constitution");
-        public static DragonType red = new DragonType("Red", "Fire", 15, "Dexterity");
-        public static DragonType silver = new DragonType("Silver", "Cold", 15, "Constitution");
-        public static DragonType white = new DragonType("White", "Cold", 15, "Constitution");
+        public static DragonType black = new DragonType("Black", Program.DamageType.ACID, 30, "Dexterity");
+        public static DragonType blue = new DragonType("Blue", Program.DamageType.LIGHTNING, 30, "Dexterity");
+        public static DragonType brass = new DragonType("Brass", Program.DamageType.FIRE, 30, "Dexterity");
+        public static DragonType bronze = new DragonType("Bronze", Program.DamageType.LIGHTNING, 30, "Dexterity");
+        public static DragonType copper = new DragonType("Copper", Program.DamageType.ACID, 30, "Dexterity");
+        public static DragonType gold = new DragonType("Gold", Program.DamageType.FIRE, 15, "Dexterity");
+        public static DragonType green = new DragonType("Green", Program.DamageType.POISON, 15, "Constitution");
+        public static DragonType red = new DragonType("Red", Program.DamageType.FIRE, 15, "Dexterity");
+        public static DragonType silver = new DragonType("Silver", Program.DamageType.COLD, 15, "Constitution");
+        public static DragonType white = new DragonType("White", Program.DamageType.COLD, 15, "Constitution");
         public static List<DragonType> allTypes = new List<DragonType>() { black, blue, brass, bronze, copper, gold, green, red, silver, white };
         public DragonType dragonType;
         public Dragonborn()
@@ -55,8 +55,8 @@ namespace DungeonsAndDumbDumbs
                 Console.Clear();
                 foreach (DragonType type in allTypes)
                 {
-                    Console.WriteLine($"{type.typeName} dragons are resistant to {type.damageResist.ToLower()} damage.\nThey can breath {type.damageResist.ToLower()} up to {type.breathDistance}ft away, " +
-                        $"this requires enemies to make a {type.breathSaveThrow.ToLower()} saving throw.\n");
+                    Console.WriteLine($"{type.typeName} dragons are resistant to {Program.GetDescription(type.damageResist).ToLower()} damage.\nThey can breath " +
+                        $"{Program.GetDescription(type.damageResist).ToLower()} up to {type.breathDistance}ft away, this requires enemies to make a {type.breathSaveThrow.ToLower()} saving throw.\n");
                 }
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Which colour dragon will you be?: ");
@@ -78,6 +78,7 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
+            Program.player.resistances.Add(dragonType.damageResist);
         }
     }
     class HillDwarf : Race

@@ -15,10 +15,10 @@ namespace DungeonsAndDumbDumbs
             NOTATTACK
         }
         public List<string> actionWords = new List<string>();
-        public Action actionMethod;
+        public Action<List<string>> actionMethod;
         public ActionType actionType;
 
-        public GameAction(List<string> words, ActionType type, Action action)
+        public GameAction(List<string> words, Action<List<string>> action, ActionType type = ActionType.ANY)
         {
             actionWords = words;
             actionType = type;

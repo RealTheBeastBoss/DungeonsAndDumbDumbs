@@ -8,7 +8,7 @@ namespace DungeonsAndDumbDumbs
     class Program
     {
         // Colour Code: Good - Green, Bad - Red, Game Info - Yellow, Player Input and Options - Blue, Prompt - Cyan
-        // Meta-game Variables:
+        // Meta Game Variables:
         public static Random RNG = new Random();
         public static Dictionary<int, int> scoreToModifier = new Dictionary<int, int>() { { 1, -5 }, { 2, -4 }, { 3, -4 }, { 4, -3 }, { 5, -3 }, { 6, -2 }, { 7, -2 }, { 8, -1 }, { 9, -1 }, 
             { 10, 0 }, { 11, 0 }, { 12, 1 }, { 13, 1 }, { 14, 2 }, { 15, 2 }, { 16, 3 }, { 17, 3 }, { 18, 4 }, { 19, 4 }, { 20, 5 }, { 21, 5 }, { 22, 6 }, { 23, 6 }, { 24, 7 }, { 25, 7 }, 
@@ -98,6 +98,12 @@ namespace DungeonsAndDumbDumbs
             new Tuple<Skill, string>(Skill.NATURE, "Intelligence"), new Tuple<Skill, string>(Skill.PERCEPTION, "Wisdom"), new Tuple<Skill, string>(Skill.PERFORMANCE, "Charisma"), 
             new Tuple<Skill, string>(Skill.PERSUASION, "Charisma"), new Tuple<Skill, string>(Skill.RELIGION, "Intelligence"), new Tuple<Skill, string>(Skill.SLEIGHTOFHAND, "Dexterity"), 
             new Tuple<Skill, string>(Skill.STEALTH, "Dexterity"), new Tuple<Skill, string>(Skill.SURVIVAL, "Wisdom") };
+        public enum GameState
+        {
+            COMBAT,
+            INTERACTION,
+            FREE
+        }
         public enum DamageType
         {
             [Description("Acid")]
@@ -127,19 +133,23 @@ namespace DungeonsAndDumbDumbs
             [Description("Thunder")]
             THUNDER
         }
+        // Game Spells:
         public static Spell acidSplash = new Spell("Acid Splash", 0, Spell.AcidSplash, 60, "You hurl a bubble of acid. Choose one or two creatures you can see within range. " +
             "A target must succeed on a\nDexterity saving throw or take 1d6 acid damage.");
+
         public static Spell animalFriendship = new Spell("Animal Friendship", 1, Spell.AnimalFriendship, 30, "Charm a beast nearby to you for 24 hours.");
         public static Spell bane = new Spell("Bane", 1, Spell.Bane, 30, "Up to three creatures in range will need to subtract a D4 to an attack roll or saving throw on their next turn.");
         public static Spell bless = new Spell("Bless", 1, Spell.Bless, 30, "Up to three creatures in range will add a D4 to an attack roll or saving throw on their next turn.");
         public static Spell burningHands = new Spell("Burning Hands", 1, Spell.BurningHands, 15, "Each creature within 15ft may take 3D6 fire damage. On higher levels, the damage increases by " +
             "one D6 for each higher level.");
+
         public static Spell charmPerson = new Spell("Charm Person", 1, Spell.CharmPerson, 30, "Charm a nearby person for an hour. Once the spell is done, they know you cast it on them.");
         public static Spell colourSpray = new Spell("Colour Spray", 1, Spell.ColourSpray, 15, "Creatures around you can get blinded.");
         public static Spell command = new Spell("Command", 1, Spell.Command, 60, "Send a one-word command to an enemy and they may spend their next turn following it.");
         public static Spell comprehendLanguage = new Spell("Comprehend Languages", 1, Spell.ComprehendLanguages, 1, "Cast this to be able to understand any language you hear/see for an hour.", true);
         public static Spell createOrDestroyWater = new Spell("Create or Destroy Water", 1, Spell.CreateDestroyWater, 30, "You are able to create or destroy up to 10 gallons of water" +
             ". You can also destroy fog.");
+
         public static Spell cureWounds = new Spell("Cure Wounds", 1, Spell.CureWounds, 1, "Slightly heal someone you can touch.");
         public static Spell dancingLights = new Spell("Dancing Lights", 0, Spell.DancingLights, 120, "Dancing lights appear around you, allowing you to see around you.");
         public static Spell detectGoodAndEvil = new Spell("Detect Good and Evil", 1, Spell.DetectGoodEvil, 30, "You know any good or evil energy in the area around you.");
@@ -147,6 +157,7 @@ namespace DungeonsAndDumbDumbs
         public static Spell detectPoison = new Spell("Detect Poison and Disease", 1, Spell.DetectPoison, 30, "You know of any poisons or diseases in your area.", true);
         public static Spell fireBolt = new Spell("Fire Bolt", 0, Spell.FireBolt, 120, "You hurl a mote of fire at a creature or object within range. Make a ranged spell attack against the " +
             "target. On a hit,\nthe target takes 1d10 fire damage. A flammable object hit by this spell ignites if it isn't being worn or carried.");
+
         public static Spell guidance = new Spell("Guidance", 0, Spell.Guidance, 1, "You touch a friend before they make an ability check and they add a D4 to the roll.");
         public static Spell guidingBolt = new Spell("Guiding Bolt", 1, Spell.GuidingBolt, 120, "Deals 4 D6 damage and makes it easier for the next damage.");
         public static Spell healingWord = new Spell("Healing Word", 1, Spell.HealingWord, 60, "Heals someone around you.");
@@ -156,14 +167,17 @@ namespace DungeonsAndDumbDumbs
         public static Spell mageHand = new Spell("Mage Hand", 0, Spell.MageHand, 30, "A spectral hand appears that you can control for your action.");
         public static Spell magicMissile = new Spell("Magic Missile", 1, Spell.MagicMissle, 120, "Three magic missiles appear and you can send them at creatures in the area. They deal 1D4 + 1 " +
             "damage each.\nAt higher levels, you get an additional missile for each extra level.");
+
         public static Spell mending = new Spell("Mending", 0, Spell.Mending, 1, "Touching an object will repair minor damage, but not restore magic.");
         public static Spell minorIllusion = new Spell("Minor Illusion", 0, Spell.MinorIllusion, 30, "You can cast an illusion that can attempt to confuse or distract an enemy.");
         public static Spell poisonSpray = new Spell("Poison Spray", 0, Spell.PoisonSpray, 10, "You extend your hand toward a creature you can see within range and project a puff of noxious gas from your palm.\n" +
             "The creature must succeed on a Constitution saving throw or take 1d12 poison damage.");
+
         public static Spell prestidigitation = new Spell("Prestidigitation", 0, Spell.Prestidigitation, 10, "You can cast a variety of novel tricks.");
         public static Spell purifyFoodDrink = new Spell("Purify Food and Drink", 1, Spell.PurifyFoodDrink, 5, "You can remove poison and disease from non-magic food around you.", true);
         public static Spell rayOfFrost = new Spell("Ray of Frost", 0, Spell.RayOfFrost, 60, "A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell " +
             "attack against the\ntarget. On a hit, it takes 1d8 cold damage, and its speed is reduced by 10 feet until the start of your next turn.");
+
         public static Spell resistance = new Spell("Resistance", 0, Spell.Resistance, 1, "You touch a friend before they make a saving throw and they add a D4 to the saving throw.");
         public static Spell shieldOfFaith = new Spell("Shield of Faith", 1, Spell.ShieldOfFaith, 60, "Grant +2 to a creatures AC for 10 minutes.");
         public static Spell shockingGrasp = new Spell("Shocking Grasp", 0, Spell.ShockingGrasp, 1, "You cause melee spell lightning damage to a nearby enemy.");
@@ -171,22 +185,174 @@ namespace DungeonsAndDumbDumbs
         public static Spell thaumaturgy = new Spell("Thaumaturgy", 0, Spell.Thaumaturgy, 30, "You can cause minor disturbances around you.");
         public static Spell thunderWave = new Spell("Thunderwave", 1, Spell.ThunderWave, 15, "Each creature within range may take 2D8 thunder damage, and be pushed 10ft away.\nAt higher levels, " +
             "it will do an extra D8 of damage for each extra level.");
+
         public static Spell trueStrike = new Spell("True Strike", 0, Spell.TrueStrike, 30, "You pick a target within range and you can see their defenses. You then get advantage on\n" +
             "an attack roll if made next turn.");
+        // Game Spell Sets:
         public static List<Spell> allSpells = new List<Spell>() { animalFriendship, acidSplash, bane, bless, burningHands, charmPerson, colourSpray, command, comprehendLanguage, createOrDestroyWater, cureWounds, 
             dancingLights, detectGoodAndEvil, detectMagic, detectPoison, fireBolt, guidance, guidingBolt, healingWord, inflictWounds, light, mageArmour, mageHand, magicMissile, mending, minorIllusion, poisonSpray, 
             prestidigitation, purifyFoodDrink, rayOfFrost, resistance, shieldOfFaith, shockingGrasp, spareTheDying, thaumaturgy, thunderWave, trueStrike };
+
         public static List<Spell> wizardSpells = new List<Spell>() { acidSplash, burningHands, charmPerson, colourSpray, comprehendLanguage, dancingLights, detectMagic, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
             minorIllusion, poisonSpray, prestidigitation, rayOfFrost, shockingGrasp, thunderWave, trueStrike };
+
         public static List<Spell> bardSpells = new List<Spell>() { animalFriendship, bane, charmPerson, comprehendLanguage, cureWounds, dancingLights, detectMagic, healingWord, light, mageHand, mending, 
             minorIllusion, prestidigitation, thunderWave, trueStrike };
+
         public static List<Spell> clericSpells = new List<Spell>() { bane, bless, command, createOrDestroyWater, cureWounds, detectGoodAndEvil, detectMagic, detectPoison, guidance, guidingBolt, 
             healingWord, inflictWounds, light, mending, purifyFoodDrink, resistance, shieldOfFaith, spareTheDying, thaumaturgy };
         public static List<Spell> druidSpells = new List<Spell>() { animalFriendship, charmPerson, createOrDestroyWater, cureWounds, detectMagic, detectPoison, guidance, healingWord, mending, 
             poisonSpray, purifyFoodDrink, resistance, thunderWave };
+
         public static List<Spell> sorcererSpells = new List<Spell>() { acidSplash, burningHands, colourSpray, dancingLights, charmPerson, comprehendLanguage, detectMagic, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
             minorIllusion, poisonSpray, prestidigitation, rayOfFrost, shockingGrasp, thunderWave, trueStrike };
-        public static List<Spell> warlockSpells = new List<Spell>() { burningHands };
+
+        public static List<Spell> warlockSpells = new List<Spell>() { burningHands }; // TODO: Fix this
+        // Game Armour:
+        public static Armour padded = new Armour("Padded Armour", new Tuple<int, string>(5, "Gold"), 11, new List<string>() { "Light Armour" }, 1, 1, true);
+        public static Armour leather = new Armour("Leather Armour", new Tuple<int, string>(10, "Gold"), 11, new List<string>() { "Light Armour" }, 1, 1);
+        public static Armour studdedLeather = new Armour("Studded Leather Armour", new Tuple<int, string>(45, "Gold"), 12, new List<string>() { "Light Armour" }, 1, 1);
+        public static Armour hide = new Armour("Hide Armour", new Tuple<int, string>(10, "Gold"), 12, new List<string>() { "Medium Armour" }, 5, 1);
+        public static Armour chainShirt = new Armour("Chain Shirt", new Tuple<int, string>(50, "Gold"), 13, new List<string>() { "Medium Armour" }, 5, 1);
+        public static Armour scaleMail = new Armour("Scale Mail Armour", new Tuple<int, string>(50, "Gold"), 14, new List<string>() { "Medium Armour" }, 5, 1, true);
+        public static Armour breastPlate = new Armour("Breast Plate", new Tuple<int, string>(400, "Gold"), 14, new List<string>() { "Medium Armour" }, 5, 1);
+        public static Armour halfPlate = new Armour("Half Plate", new Tuple<int, string>(750, "Gold"), 15, new List<string>() { "Medium Armour" }, 5, 1, true);
+        public static Armour ringMail = new Armour("Ring Mail Armour", new Tuple<int, string>(30, "Gold"), 14, new List<string>() { "Heavy Armour" }, 10, 5, true);
+        public static Armour chainMail = new Armour("Chain Mail Armour", new Tuple<int, string>(75, "Gold"), 16, new List<string>() { "Heavy Armour" }, 10, 5, true, 13);
+        public static Armour splint = new Armour("Splint Armour", new Tuple<int, string>(200, "Gold"), 17, new List<string>() { "Heavy Armour" }, 10, 5, true, 15);
+        public static Armour plate = new Armour("Plate Armour", new Tuple<int, string>(1500, "Gold"), 18, new List<string>() { "Heavy Armour" }, 10, 5, true, 15);
+        public static Armour shield = new Armour("Shield", new Tuple<int, string>(10, "Gold"), 2, new List<string>() { "Shields" }, 0, 0);
+        // Game Weapons:
+        public static Weapon club = new Weapon("Club", new Tuple<int, string>(1, "Silver"), new List<string>() { "Simple Weapons", "Clubs" }, new Tuple<int, int>(1, 4), DamageType.BLUDGEONING, 
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.LIGHT, Weapon.WeaponProperty.MELEE });
+
+        public static Weapon dagger = new Weapon("Dagger", new Tuple<int, string>(2, "Gold"), new List<string>() { "Simple Weapons", "Daggers" }, new Tuple<int, int>(1, 4), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.LIGHT, Weapon.WeaponProperty.FINESSE, Weapon.WeaponProperty.THROWN, Weapon.WeaponProperty.MELEE }, 20, 60);
+
+        public static Weapon greatClub = new Weapon("Great Club", new Tuple<int, string>(2, "Silver"), new List<string>() { "Simple Weapons", "Clubs" }, new Tuple<int, int>(1, 8), DamageType.BLUDGEONING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.TWOHANDED, Weapon.WeaponProperty.MELEE });
+
+        public static Weapon handAxe = new Weapon("Hand Axe", new Tuple<int, string>(5, "Gold"), new List<string>() { "Simple Weapons" }, new Tuple<int, int>(1, 6), DamageType.SLASHING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.LIGHT, Weapon.WeaponProperty.THROWN, Weapon.WeaponProperty.MELEE }, 20, 60);
+
+        public static Weapon javelin = new Weapon("Javelin", new Tuple<int, string>(5, "Silver"), new List<string>() { "Simple Weapons", "Javelins" }, new Tuple<int, int>(1, 6), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.THROWN, Weapon.WeaponProperty.MELEE }, 30, 120);
+
+        public static Weapon lightHammer = new Weapon("Light Hammer", new Tuple<int, string>(2, "Gold"), new List<string>() { "Simple Weapons" }, new Tuple<int, int>(1, 4), DamageType.BLUDGEONING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.THROWN, Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.LIGHT }, 20, 60);
+
+        public static Weapon mace = new Weapon("Mace", new Tuple<int, string>(5, "Gold"), new List<string>() { "Simple Weapons", "Maces" }, new Tuple<int, int>(1, 6), DamageType.BLUDGEONING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE });
+
+        public static Weapon quarterStaff = new Weapon("Quarterstaff", new Tuple<int, string>(2, "Silver"), new List<string>() { "Simple Weapons", "Quarterstaffs" }, new Tuple<int, int>(1, 6), 
+            DamageType.BLUDGEONING, new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.VERSATILE, Weapon.WeaponProperty.MELEE }, 5, 5, new Tuple<int, int>(1, 8));
+
+        public static Weapon sickle = new Weapon("Sickle", new Tuple<int, string>(1, "Gold"), new List<string>() { "Simple Weapons", "Sickles" }, new Tuple<int, int>(1, 4), DamageType.SLASHING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.LIGHT, Weapon.WeaponProperty.MELEE });
+
+        public static Weapon spear = new Weapon("Spear", new Tuple<int, string>(1, "Gold"), new List<string>() { "Simple Weapons", "Spears" }, new Tuple<int, int>(1, 6), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.THROWN, Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.VERSATILE }, 20, 60, new Tuple<int, int>(1, 8));
+
+        public static Weapon lightCrossbow = new Weapon("Light Crossbow", new Tuple<int, string>(25, "Gold"), new List<string>() { "Simple Weapons", "Light Crossbows" }, new Tuple<int, int>(1, 8), 
+            DamageType.PIERCING, new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.CROSSBOWAMMUNITION, Weapon.WeaponProperty.LOADING, Weapon.WeaponProperty.TWOHANDED }, 80, 320);
+
+        public static Weapon dart = new Weapon("Dart", new Tuple<int, string>(5, "Copper"), new List<string>() { "Simple Weapons", "Darts" }, new Tuple<int, int>(1, 4),
+            DamageType.PIERCING, new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.FINESSE, Weapon.WeaponProperty.THROWN }, 20, 60);
+
+        public static Weapon shortbow = new Weapon("Shortbow", new Tuple<int, string>(25, "Gold"), new List<string>() { "Simple Weapons" }, new Tuple<int, int>(1, 6),
+            DamageType.PIERCING, new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.ARROWAMMUNITION, Weapon.WeaponProperty.TWOHANDED }, 80, 320);
+
+        public static Weapon sling = new Weapon("Sling", new Tuple<int, string>(1, "Silver"), new List<string>() { "Simple Weapons", "Slings" }, new Tuple<int, int>(1, 4),
+            DamageType.BLUDGEONING, new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.SLINGBULLETAMMUNITION }, 30, 120);
+
+        public static Weapon battleAxe = new Weapon("Battleaxe", new Tuple<int, string>(10, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 8), DamageType.SLASHING, 
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.VERSATILE, Weapon.WeaponProperty.MELEE }, 5, 5, new Tuple<int, int>(1, 10));
+
+        public static Weapon flail = new Weapon("Flail", new Tuple<int, string>(10, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 8), DamageType.BLUDGEONING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE });
+
+        public static Weapon glaive = new Weapon("Glaive", new Tuple<int, string>(20, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 10), DamageType.SLASHING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.HEAVY, Weapon.WeaponProperty.REACH, Weapon.WeaponProperty.TWOHANDED });
+
+        public static Weapon greatAxe = new Weapon("Great Axe", new Tuple<int, string>(30, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 12), DamageType.SLASHING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.HEAVY, Weapon.WeaponProperty.TWOHANDED });
+
+        public static Weapon greatSword = new Weapon("Great Sword", new Tuple<int, string>(50, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(2, 6), DamageType.SLASHING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.HEAVY, Weapon.WeaponProperty.TWOHANDED });
+
+        public static Weapon halberd = new Weapon("Halberd", new Tuple<int, string>(20, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 10), DamageType.SLASHING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.HEAVY, Weapon.WeaponProperty.REACH, Weapon.WeaponProperty.TWOHANDED });
+
+        public static Weapon lance = new Weapon("Lance", new Tuple<int, string>(10, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 12), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.REACH, Weapon.WeaponProperty.LANCE });
+
+        public static Weapon longSword = new Weapon("Longsword", new Tuple<int, string>(15, "Gold"), new List<string>() { "Martial Weapons", "Longswords" }, new Tuple<int, int>(1, 8), DamageType.SLASHING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.VERSATILE, Weapon.WeaponProperty.MELEE }, 5, 5, new Tuple<int, int>(1, 10));
+
+        public static Weapon maul = new Weapon("Maul", new Tuple<int, string>(10, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(2, 6), DamageType.BLUDGEONING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.HEAVY, Weapon.WeaponProperty.TWOHANDED });
+
+        public static Weapon morningStar = new Weapon("Morningstar", new Tuple<int, string>(15, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 8), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE });
+
+        public static Weapon pike = new Weapon("Pike", new Tuple<int, string>(5, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 10), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.HEAVY, Weapon.WeaponProperty.REACH, Weapon.WeaponProperty.TWOHANDED });
+
+        public static Weapon rapier = new Weapon("Rapier", new Tuple<int, string>(25, "Gold"), new List<string>() { "Martial Weapons", "Rapiers" }, new Tuple<int, int>(1, 8), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.FINESSE });
+
+        public static Weapon scimitar = new Weapon("Scimitar", new Tuple<int, string>(25, "Gold"), new List<string>() { "Martial Weapons", "Scimitars" }, new Tuple<int, int>(1, 6), DamageType.SLASHING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.FINESSE, Weapon.WeaponProperty.LIGHT });
+
+        public static Weapon shortSword = new Weapon("Shortsword", new Tuple<int, string>(10, "Gold"), new List<string>() { "Martial Weapons", "Shortswords" }, new Tuple<int, int>(1, 6), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.FINESSE, Weapon.WeaponProperty.LIGHT });
+
+        public static Weapon trident = new Weapon("Trident", new Tuple<int, string>(5, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 6), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.VERSATILE, Weapon.WeaponProperty.MELEE, Weapon.WeaponProperty.THROWN }, 20, 60, new Tuple<int, int>(1, 8));
+
+        public static Weapon warPick = new Weapon("War Pick", new Tuple<int, string>(5, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 8), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.MELEE });
+
+        public static Weapon warhammer = new Weapon("Warhammer", new Tuple<int, string>(15, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 8), DamageType.BLUDGEONING,
+           new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.VERSATILE, Weapon.WeaponProperty.MELEE }, 5, 5, new Tuple<int, int>(1, 10));
+
+        public static Weapon whip = new Weapon("Whip", new Tuple<int, string>(2, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 4), DamageType.SLASHING,
+           new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.FINESSE, Weapon.WeaponProperty.REACH, Weapon.WeaponProperty.MELEE });
+
+        public static Weapon blowGun = new Weapon("Blowgun", new Tuple<int, string>(10, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 1), DamageType.PIERCING, 
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.NEEDLEAMMUNITION, Weapon.WeaponProperty.LOADING }, 25, 100);
+
+        public static Weapon handCrossbow = new Weapon("Hand Crossbow", new Tuple<int, string>(75, "Gold"), new List<string>() { "Martial Weapons", "Hand Crossbows" }, new Tuple<int, int>(1, 6), 
+            DamageType.PIERCING, new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.CROSSBOWAMMUNITION, Weapon.WeaponProperty.LOADING, Weapon.WeaponProperty.LIGHT }, 30, 120);
+
+        public static Weapon heavyCrossbow = new Weapon("Heavy Crossbow", new Tuple<int, string>(50, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 10), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.CROSSBOWAMMUNITION, Weapon.WeaponProperty.LOADING, Weapon.WeaponProperty.HEAVY, Weapon.WeaponProperty.TWOHANDED }, 100, 400);
+
+        public static Weapon longBow = new Weapon("Longbow", new Tuple<int, string>(50, "Gold"), new List<string>() { "Martial Weapons" }, new Tuple<int, int>(1, 8), DamageType.PIERCING,
+            new List<Weapon.WeaponProperty>() { Weapon.WeaponProperty.ARROWAMMUNITION, Weapon.WeaponProperty.HEAVY, Weapon.WeaponProperty.TWOHANDED }, 150, 600);
+
+        public static Weapon net = new Weapon("Net", new Tuple<int, string>(1, "Gold"), new List<string>() { "Martial Weapons" }, null, DamageType.FORCE, new List<Weapon.WeaponProperty>(), 5, 15);
+
+        public static List<Weapon> allWeapons = new List<Weapon>() { club, dagger, greatClub, handAxe, javelin, lightHammer, mace, quarterStaff, sickle, spear, lightCrossbow, dart, shortbow, sling, 
+            battleAxe, flail, glaive, greatAxe, greatSword, halberd, lance, longSword, maul, morningStar, pike, rapier, scimitar, shortSword, trident, warPick, warhammer, whip, blowGun, handCrossbow, 
+            heavyCrossbow, longBow, net };
+
+        public static List<Weapon> allSimpleMeleeWeapons = new List<Weapon>() { club, dagger, greatClub, handAxe, javelin, lightHammer, mace, quarterStaff, sickle, spear };
+
+        public static List<Weapon> allSimpleWeapons = new List<Weapon>(allSimpleMeleeWeapons) { lightCrossbow, dart, shortbow, sling };
+
+        public static List<Weapon> allMartialMeleeWeapons = new List<Weapon>() { battleAxe, flail, glaive, greatAxe, greatSword, halberd, lance, longSword, maul, morningStar, pike, rapier, scimitar, 
+            shortSword, trident, warPick, warhammer, whip };
+
+        public static List<Weapon> allMartialWeapons = new List<Weapon>(allMartialMeleeWeapons) { blowGun, handCrossbow, heavyCrossbow, longBow, net };
+        // Game Basic Equipment:
+        public static Equipment arrow = new Equipment("Arrow", new Tuple<int, string>(1, "Gold"));
+        public static Equipment blowgunNeedle = new Equipment("Blowgun Needle", new Tuple<int, string>(1, "Gold"));
+        public static Equipment crossbowBolt = new Equipment("Crossbow Bolt", new Tuple<int, string>(1, "Gold"));
+        public static Equipment slingBullet = new Equipment("Sling Bullet", new Tuple<int, string>(4, "Copper"));
+        public static Equipment thievesTools = new Equipment("Thieve's Tools", new Tuple<int, string>(25, "Gold"));
+        // Basic Game Variables:
+        public static GameState currentState = GameState.FREE;
         public static Player player = new Player();
 
         static void Main(string[] args)
@@ -657,7 +823,12 @@ namespace DungeonsAndDumbDumbs
             return modifier;
         }
 
-        public static int GetSkillModifier(LivingCreature creature, string skillName)
+        public static int GetPassiveSenseScore(LivingCreature creature, string senseName)
+        {
+            return 10 + GetSkillModifier(creature, senseName);
+        }
+
+        public static int GetSkillModifier(LivingCreature creature, string skillName, bool isAboutStone = false)
         {
             foreach (Tuple<Skill, string> skillAbility in allSkillsAbilities)
             {
@@ -674,7 +845,10 @@ namespace DungeonsAndDumbDumbs
                             {
                                 Rogue rogue = (Rogue)peace.characterClass;
                                 if (rogue.doubleProficiency.Contains(skillName)) modifier += creature.proficiencyBonus;
-                            } // TODO: Dwarf Stonecunning
+                            } else if (isAboutStone && (peace.characterRace is HillDwarf || peace.characterRace is MountainDwarf))
+                            {
+                                modifier += creature.proficiencyBonus;
+                            }
                         }
                     }
                     return modifier;
@@ -741,6 +915,16 @@ namespace DungeonsAndDumbDumbs
             {
                 creature.proficiencies.Add(proficiency);
             }
+        }
+
+        public static int GetDistanceBetweenSquares(int x1, int y1, int x2, int y2)
+        {
+            int horizontalDistance = Math.Abs(x1 - x2);
+            horizontalDistance *= horizontalDistance;
+            int verticalDistance = Math.Abs(y1 - y2);
+            verticalDistance *= verticalDistance;
+            int distance = horizontalDistance + verticalDistance;
+            return 5 * Convert.ToInt32(Math.Floor(Math.Sqrt(distance)));
         }
 
         public static string GetDescription(Enum en)
