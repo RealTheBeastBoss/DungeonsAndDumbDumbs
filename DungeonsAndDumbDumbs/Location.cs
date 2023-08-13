@@ -12,10 +12,12 @@ namespace DungeonsAndDumbDumbs
         {
             public bool isDifficultTerrain;
             public bool hasSpace;
-            public Weapon thrownWeapon;
-            public Square(bool space = false, bool terrain = false)
+            public Program.Terrain terrainType;
+            public Weapon thrownWeapon = null;
+            public Square(bool space = false, Program.Terrain type = Program.Terrain.INSIDE, bool terrain = false)
             {
                 isDifficultTerrain = terrain;
+                terrainType = type;
                 hasSpace = space;
             }
         }

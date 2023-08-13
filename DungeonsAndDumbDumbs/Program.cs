@@ -7,12 +7,14 @@ namespace DungeonsAndDumbDumbs
 {
     class Program
     {
-        // Colour Code: Good - Green, Bad - Red, Game Info - Yellow, Player Input and Options - Blue, Prompt - Cyan
+        // Colour Code: Good - Green, Bad - Red, Game Info - Yellow, Player Input and Options - Blue, Prompt - Cyan, Incorrect Response - Magenta
         // Meta Game Variables:
         public static Random RNG = new Random();
         public static Dictionary<int, int> scoreToModifier = new Dictionary<int, int>() { { 1, -5 }, { 2, -4 }, { 3, -4 }, { 4, -3 }, { 5, -3 }, { 6, -2 }, { 7, -2 }, { 8, -1 }, { 9, -1 }, 
             { 10, 0 }, { 11, 0 }, { 12, 1 }, { 13, 1 }, { 14, 2 }, { 15, 2 }, { 16, 3 }, { 17, 3 }, { 18, 4 }, { 19, 4 }, { 20, 5 }, { 21, 5 }, { 22, 6 }, { 23, 6 }, { 24, 7 }, { 25, 7 }, 
             { 26, 8 }, { 27, 8 }, { 28, 9 }, { 29, 9 }, { 30, 10 } };
+        public static Dictionary<int, int> leveltoXP = new Dictionary<int, int>() { { 2, 300 }, { 3, 900 }, { 4, 2700 }, { 5, 6500 }, { 6, 14000 }, { 7, 23000 }, { 8, 34000 }, { 9, 48000 }, 
+            { 10, 64000 }, {11, 85000 }, { 12, 100000 }, { 13, 120000 }, { 14, 140000 }, { 15, 165000 }, { 16, 195000 }, { 17, 225000 }, { 18, 265000 }, { 19, 305000 }, { 20, 355000 } };
         public static List<string> confirmations = new List<string>() { "yes", "yep", "ok", "sure", "alright", "yeah", "y" };
         public static List<Tuple<string, Type>> allRaces = new List<Tuple<string, Type>>() { new Tuple<string, Type>("Dragonborn", typeof(Dragonborn)), 
             new Tuple<string, Type>("Hill Dwarf", typeof(HillDwarf)), new Tuple<string, Type>("Mountain Dwarf", typeof(MountainDwarf)), new Tuple<string, Type>("High Elf", typeof(HighElf)),
@@ -133,81 +135,138 @@ namespace DungeonsAndDumbDumbs
             [Description("Thunder")]
             THUNDER
         }
+        public enum Terrain
+        {
+            [Description("Arctic")]
+            ARCTIC,
+            [Description("Coast")]
+            COAST,
+            [Description("Desert")]
+            DESERT,
+            [Description("Forest")]
+            FOREST,
+            [Description("Grassland")]
+            GRASSLAND,
+            [Description("Inside")]
+            INSIDE,
+            [Description("Mountain")]
+            MOUNTAIN,
+            [Description("Swamp")]
+            SWAMP,
+            [Description("Underdark")]
+            UNDERDARK
+        }
+        public static List<Terrain> naturalTerrain = new List<Terrain>() { Terrain.ARCTIC, Terrain.COAST, Terrain.DESERT, Terrain.FOREST, Terrain.GRASSLAND, Terrain.MOUNTAIN, Terrain.SWAMP, 
+            Terrain.UNDERDARK };
         // Game Spells:
         public static Spell acidSplash = new Spell("Acid Splash", 0, Spell.AcidSplash, 60, "You hurl a bubble of acid. Choose one or two creatures you can see within range. " +
-            "A target must succeed on a\nDexterity saving throw or take 1d6 acid damage.");
+            "A target must succeed on a\nDexterity saving throw or take 1d6 acid damage.", new List<GameState>() { GameState.COMBAT });
 
         public static Spell animalFriendship = new Spell("Animal Friendship", 1, Spell.AnimalFriendship, 30, "Charm a beast nearby to you for 24 hours.");
-        public static Spell bane = new Spell("Bane", 1, Spell.Bane, 30, "Up to three creatures in range will need to subtract a D4 to an attack roll or saving throw on their next turn.");
-        public static Spell bless = new Spell("Bless", 1, Spell.Bless, 30, "Up to three creatures in range will add a D4 to an attack roll or saving throw on their next turn.");
+        public static Spell bane = new Spell("Bane", 1, Spell.Bane, 30, "Up to three creatures in range will need to subtract a D4 to an attack roll or saving throw on their next turn.", 
+            new List<GameState>() { GameState.COMBAT });
+
+        public static Spell bless = new Spell("Bless", 1, Spell.Bless, 30, "Up to three creatures in range will add a D4 to an attack roll or saving throw on their next turn.", 
+            new List<GameState>() { GameState.COMBAT });
+
         public static Spell burningHands = new Spell("Burning Hands", 1, Spell.BurningHands, 15, "Each creature within 15ft may take 3D6 fire damage. On higher levels, the damage increases by " +
-            "one D6 for each higher level.");
+            "one D6 for each higher level.", new List<GameState>() { GameState.COMBAT });
 
         public static Spell charmPerson = new Spell("Charm Person", 1, Spell.CharmPerson, 30, "Charm a nearby person for an hour. Once the spell is done, they know you cast it on them.");
-        public static Spell colourSpray = new Spell("Colour Spray", 1, Spell.ColourSpray, 15, "Creatures around you can get blinded.");
-        public static Spell command = new Spell("Command", 1, Spell.Command, 60, "Send a one-word command to an enemy and they may spend their next turn following it.");
-        public static Spell comprehendLanguage = new Spell("Comprehend Languages", 1, Spell.ComprehendLanguages, 1, "Cast this to be able to understand any language you hear/see for an hour.", true);
+        public static Spell colourSpray = new Spell("Colour Spray", 1, Spell.ColourSpray, 15, "Creatures around you can get blinded.", new List<GameState>() { GameState.COMBAT });
+        public static Spell command = new Spell("Command", 1, Spell.Command, 60, "Send a one-word command to an enemy and they may spend their next turn following it.", 
+            new List<GameState>() { GameState.COMBAT });
+
+        public static Spell comprehendLanguage = new Spell("Comprehend Languages", 1, Spell.ComprehendLanguages, 1, "Cast this to be able to understand any language you hear/see for an hour.", null,
+            Spell.Type.ACTION, true);
+
         public static Spell createOrDestroyWater = new Spell("Create or Destroy Water", 1, Spell.CreateDestroyWater, 30, "You are able to create or destroy up to 10 gallons of water" +
             ". You can also destroy fog.");
 
         public static Spell cureWounds = new Spell("Cure Wounds", 1, Spell.CureWounds, 1, "Slightly heal someone you can touch.");
         public static Spell dancingLights = new Spell("Dancing Lights", 0, Spell.DancingLights, 120, "Dancing lights appear around you, allowing you to see around you.");
         public static Spell detectGoodAndEvil = new Spell("Detect Good and Evil", 1, Spell.DetectGoodEvil, 30, "You know any good or evil energy in the area around you.");
-        public static Spell detectMagic = new Spell("Detect Magic", 1, Spell.DetectMagic, 30, "You know any magical presence around you.", true);
-        public static Spell detectPoison = new Spell("Detect Poison and Disease", 1, Spell.DetectPoison, 30, "You know of any poisons or diseases in your area.", true);
+        public static Spell detectMagic = new Spell("Detect Magic", 1, Spell.DetectMagic, 30, "You know any magical presence around you.", null, Spell.Type.ACTION, true);
+        public static Spell detectPoison = new Spell("Detect Poison and Disease", 1, Spell.DetectPoison, 30, "You know of any poisons or diseases in your area.", null, Spell.Type.ACTION, true);
+        public static Spell divineFavour = new Spell("Divine Favour", 1, Spell.DivineFavour, 1, "For a minute, your weapon attacks will deal a d4 of Radiant damage.", 
+            new List<GameState>() { GameState.COMBAT }, Spell.Type.BONUS);
+
+        public static Spell entangle = new Spell("Entangle", 1, Spell.Entangle, 90, "You can create 20ft of difficult terrain and trap monsters in that area.", 
+            new List<GameState>() { GameState.COMBAT });
+
+        public static Spell expeditiousRetreat = new Spell("Expeditious Retreat", 1, Spell.ExpeditiousRetreat, 1, "When this spell is cast and for bonus actions each turn, you can dash.",
+            new List<GameState>() { GameState.COMBAT }, Spell.Type.BONUS);
+
         public static Spell fireBolt = new Spell("Fire Bolt", 0, Spell.FireBolt, 120, "You hurl a mote of fire at a creature or object within range. Make a ranged spell attack against the " +
-            "target. On a hit,\nthe target takes 1d10 fire damage. A flammable object hit by this spell ignites if it isn't being worn or carried.");
+            "target. On a hit,\nthe target takes 1d10 fire damage. A flammable object hit by this spell ignites if it isn't being worn or carried.", new List<GameState>() { GameState.COMBAT });
 
         public static Spell guidance = new Spell("Guidance", 0, Spell.Guidance, 1, "You touch a friend before they make an ability check and they add a D4 to the roll.");
-        public static Spell guidingBolt = new Spell("Guiding Bolt", 1, Spell.GuidingBolt, 120, "Deals 4 D6 damage and makes it easier for the next damage.");
-        public static Spell healingWord = new Spell("Healing Word", 1, Spell.HealingWord, 60, "Heals someone around you.");
-        public static Spell inflictWounds = new Spell("Inflict Wounds", 1, Spell.InflictWounds, 1, "Melee attacks someone with 3 D10 Necrotic Damage.");
+        public static Spell guidingBolt = new Spell("Guiding Bolt", 1, Spell.GuidingBolt, 120, "Deals 4 D6 damage and makes it easier for the next damage.", new List<GameState>() { GameState.COMBAT });
+        public static Spell healingWord = new Spell("Healing Word", 1, Spell.HealingWord, 60, "Heals someone around you.", new List<GameState>() { GameState.COMBAT }, Spell.Type.BONUS);
+        public static Spell hellishRebuke = new Spell("Hellish Rebuke", 1, Spell.HellishRebuke, 60, "The creature that damaged you makes a Dex save and takes 2d10 fire damage. Higher levels add a " +
+            "d10.", new List<GameState>() { GameState.COMBAT }, Spell.Type.REACTION);
+
+        public static Spell inflictWounds = new Spell("Inflict Wounds", 1, Spell.InflictWounds, 1, "Melee attacks someone with 3 D10 Necrotic Damage.", new List<GameState>() { GameState.COMBAT });
         public static Spell light = new Spell("Light", 0, Spell.Light, 1, "You touch an object around you. That object glows for about 40ft.");
         public static Spell mageArmour = new Spell("Mage Armour", 1, Spell.MageArmour, 1, "Touching a willing creature who isn't wearing armour will increase their AC.");
         public static Spell mageHand = new Spell("Mage Hand", 0, Spell.MageHand, 30, "A spectral hand appears that you can control for your action.");
         public static Spell magicMissile = new Spell("Magic Missile", 1, Spell.MagicMissle, 120, "Three magic missiles appear and you can send them at creatures in the area. They deal 1D4 + 1 " +
-            "damage each.\nAt higher levels, you get an additional missile for each extra level.");
+            "damage each.\nAt higher levels, you get an additional missile for each extra level.", new List<GameState>() { GameState.COMBAT });
 
         public static Spell mending = new Spell("Mending", 0, Spell.Mending, 1, "Touching an object will repair minor damage, but not restore magic.");
         public static Spell minorIllusion = new Spell("Minor Illusion", 0, Spell.MinorIllusion, 30, "You can cast an illusion that can attempt to confuse or distract an enemy.");
         public static Spell poisonSpray = new Spell("Poison Spray", 0, Spell.PoisonSpray, 10, "You extend your hand toward a creature you can see within range and project a puff of noxious gas from your palm.\n" +
-            "The creature must succeed on a Constitution saving throw or take 1d12 poison damage.");
+            "The creature must succeed on a Constitution saving throw or take 1d12 poison damage.", new List<GameState>() { GameState.COMBAT });
 
         public static Spell prestidigitation = new Spell("Prestidigitation", 0, Spell.Prestidigitation, 10, "You can cast a variety of novel tricks.");
-        public static Spell purifyFoodDrink = new Spell("Purify Food and Drink", 1, Spell.PurifyFoodDrink, 5, "You can remove poison and disease from non-magic food around you.", true);
+        public static Spell purifyFoodDrink = new Spell("Purify Food and Drink", 1, Spell.PurifyFoodDrink, 5, "You can remove poison and disease from non-magic food around you.", null, 
+            Spell.Type.ACTION, true);
+        public static Spell protectionEvilGood = new Spell("Protection From Evil and Good", 1, Spell.ProtectionFromEvilGood, 1, "You can touch a creature to protect them from aberrations, celestials, " +
+            "elementals, fey, fiends, and undead.", new List<GameState>() { GameState.COMBAT });
+
         public static Spell rayOfFrost = new Spell("Ray of Frost", 0, Spell.RayOfFrost, 60, "A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell " +
-            "attack against the\ntarget. On a hit, it takes 1d8 cold damage, and its speed is reduced by 10 feet until the start of your next turn.");
+            "attack against the\ntarget. On a hit, it takes 1d8 cold damage, and its speed is reduced by 10 feet until the start of your next turn.", new List<GameState>() { GameState.COMBAT });
 
         public static Spell resistance = new Spell("Resistance", 0, Spell.Resistance, 1, "You touch a friend before they make a saving throw and they add a D4 to the saving throw.");
-        public static Spell shieldOfFaith = new Spell("Shield of Faith", 1, Spell.ShieldOfFaith, 60, "Grant +2 to a creatures AC for 10 minutes.");
-        public static Spell shockingGrasp = new Spell("Shocking Grasp", 0, Spell.ShockingGrasp, 1, "You cause melee spell lightning damage to a nearby enemy.");
+        public static Spell shieldOfFaith = new Spell("Shield of Faith", 1, Spell.ShieldOfFaith, 60, "Grant +2 to a creatures AC for 10 minutes.", null, Spell.Type.BONUS);
+        public static Spell shockingGrasp = new Spell("Shocking Grasp", 0, Spell.ShockingGrasp, 1, "You cause melee spell lightning damage to a nearby enemy.", new List<GameState>() { GameState.COMBAT });
         public static Spell spareTheDying = new Spell("Spare the Dying", 0, Spell.SpareTheDying, 1, "Touching someone who is at 0HP, they become stable again.");
         public static Spell thaumaturgy = new Spell("Thaumaturgy", 0, Spell.Thaumaturgy, 30, "You can cause minor disturbances around you.");
         public static Spell thunderWave = new Spell("Thunderwave", 1, Spell.ThunderWave, 15, "Each creature within range may take 2D8 thunder damage, and be pushed 10ft away.\nAt higher levels, " +
-            "it will do an extra D8 of damage for each extra level.");
+            "it will do an extra D8 of damage for each extra level.", new List<GameState>() { GameState.COMBAT });
 
         public static Spell trueStrike = new Spell("True Strike", 0, Spell.TrueStrike, 30, "You pick a target within range and you can see their defenses. You then get advantage on\n" +
-            "an attack roll if made next turn.");
+            "an attack roll if made next turn.", new List<GameState>() { GameState.COMBAT });
+
+        public static Spell viciousMockery = new Spell("Vicious Mockery", 0, Spell.ViciousMockery, 60, "A creature you choose makes a Wisdom save and takes 1d4 Psychic damage and has a hard time " +
+            "attacking next turn.", new List<GameState>() { GameState.COMBAT });
         // Game Spell Sets:
         public static List<Spell> allSpells = new List<Spell>() { animalFriendship, acidSplash, bane, bless, burningHands, charmPerson, colourSpray, command, comprehendLanguage, createOrDestroyWater, cureWounds, 
-            dancingLights, detectGoodAndEvil, detectMagic, detectPoison, fireBolt, guidance, guidingBolt, healingWord, inflictWounds, light, mageArmour, mageHand, magicMissile, mending, minorIllusion, poisonSpray, 
-            prestidigitation, purifyFoodDrink, rayOfFrost, resistance, shieldOfFaith, shockingGrasp, spareTheDying, thaumaturgy, thunderWave, trueStrike };
+            dancingLights, detectGoodAndEvil, detectMagic, detectPoison, divineFavour, entangle, expeditiousRetreat, fireBolt, guidance, guidingBolt, healingWord, hellishRebuke, inflictWounds, light, mageArmour, mageHand, magicMissile, mending, minorIllusion, poisonSpray, 
+            prestidigitation, purifyFoodDrink, protectionEvilGood, rayOfFrost, resistance, shieldOfFaith, shockingGrasp, spareTheDying, thaumaturgy, thunderWave, trueStrike, viciousMockery };
 
-        public static List<Spell> wizardSpells = new List<Spell>() { acidSplash, burningHands, charmPerson, colourSpray, comprehendLanguage, dancingLights, detectMagic, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
-            minorIllusion, poisonSpray, prestidigitation, rayOfFrost, shockingGrasp, thunderWave, trueStrike };
+        public static List<Spell> wizardSpells = new List<Spell>() { acidSplash, burningHands, charmPerson, colourSpray, comprehendLanguage, dancingLights, detectMagic, expeditiousRetreat, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
+            minorIllusion, poisonSpray, prestidigitation, protectionEvilGood, rayOfFrost, shockingGrasp, thunderWave, trueStrike };
 
         public static List<Spell> bardSpells = new List<Spell>() { animalFriendship, bane, charmPerson, comprehendLanguage, cureWounds, dancingLights, detectMagic, healingWord, light, mageHand, mending, 
-            minorIllusion, prestidigitation, thunderWave, trueStrike };
+            minorIllusion, prestidigitation, thunderWave, trueStrike, viciousMockery };
 
         public static List<Spell> clericSpells = new List<Spell>() { bane, bless, command, createOrDestroyWater, cureWounds, detectGoodAndEvil, detectMagic, detectPoison, guidance, guidingBolt, 
-            healingWord, inflictWounds, light, mending, purifyFoodDrink, resistance, shieldOfFaith, spareTheDying, thaumaturgy };
-        public static List<Spell> druidSpells = new List<Spell>() { animalFriendship, charmPerson, createOrDestroyWater, cureWounds, detectMagic, detectPoison, guidance, healingWord, mending, 
+            healingWord, inflictWounds, light, mending, purifyFoodDrink, protectionEvilGood, resistance, shieldOfFaith, spareTheDying, thaumaturgy };
+
+        public static List<Spell> druidSpells = new List<Spell>() { animalFriendship, charmPerson, createOrDestroyWater, cureWounds, detectMagic, detectPoison, entangle, guidance, healingWord, mending, 
             poisonSpray, purifyFoodDrink, resistance, thunderWave };
 
-        public static List<Spell> sorcererSpells = new List<Spell>() { acidSplash, burningHands, colourSpray, dancingLights, charmPerson, comprehendLanguage, detectMagic, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
+        public static List<Spell> paladinSpells = new List<Spell>() { bless, command, cureWounds, detectGoodAndEvil, detectMagic, detectPoison, divineFavour, protectionEvilGood, purifyFoodDrink, 
+            shieldOfFaith };
+
+        public static List<Spell> rangerSpells = new List<Spell>() { animalFriendship, cureWounds, detectMagic, detectPoison };
+
+        public static List<Spell> sorcererSpells = new List<Spell>() { acidSplash, burningHands, colourSpray, dancingLights, charmPerson, comprehendLanguage, detectMagic, expeditiousRetreat, fireBolt, light, mageArmour, mageHand, magicMissile, mending, 
             minorIllusion, poisonSpray, prestidigitation, rayOfFrost, shockingGrasp, thunderWave, trueStrike };
 
-        public static List<Spell> warlockSpells = new List<Spell>() { burningHands }; // TODO: Fix this
+        public static List<Spell> warlockSpells = new List<Spell>() { burningHands, charmPerson, command, comprehendLanguage, expeditiousRetreat, hellishRebuke, mageHand, minorIllusion, poisonSpray, 
+            prestidigitation, protectionEvilGood, trueStrike };
         // Game Armour:
         public static Armour padded = new Armour("Padded Armour", new Tuple<int, string>(5, "Gold"), 11, new List<string>() { "Light Armour" }, 1, 1, true);
         public static Armour leather = new Armour("Leather Armour", new Tuple<int, string>(10, "Gold"), 11, new List<string>() { "Light Armour" }, 1, 1);
@@ -351,9 +410,17 @@ namespace DungeonsAndDumbDumbs
         public static Equipment crossbowBolt = new Equipment("Crossbow Bolt", new Tuple<int, string>(1, "Gold"));
         public static Equipment slingBullet = new Equipment("Sling Bullet", new Tuple<int, string>(4, "Copper"));
         public static Equipment thievesTools = new Equipment("Thieve's Tools", new Tuple<int, string>(25, "Gold"));
+        // Game Actions:
+        public static GameAction showCharacterSheet = new GameAction(GameAction.ShowCharacterSheet);
+        public static GameAction showInventory = new GameAction(GameAction.ShowInventory);
+        public static GameAction useMagic = new GameAction(GameAction.UseMagic);
         // Basic Game Variables:
+        public static Player player = new Player(new List<GameAction>() { showCharacterSheet, showInventory, useMagic });
         public static GameState currentState = GameState.FREE;
-        public static Player player = new Player();
+        public static bool foundAction = false;
+        public static bool finishedCombatTurn = false;
+        public static bool currentlyBonusAction = false;
+        public static List<LivingCreature> combatTurnOrder = new List<LivingCreature>();
 
         static void Main(string[] args)
         {
@@ -708,7 +775,10 @@ namespace DungeonsAndDumbDumbs
             player.maxHitPoints = player.CalculateHitPoints();
             player.currentHitPoints = player.maxHitPoints;
             player.ShowCharacterSheet();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
+            Console.Clear();
         }
 
         static string FormatName(string name)
@@ -760,6 +830,25 @@ namespace DungeonsAndDumbDumbs
             return false;
         }
 
+        public static void GetAction()
+        {
+            foundAction = false;
+            while (!foundAction)
+            {
+                Console.Clear();
+                Console.Write("What would you like to do next?: ");
+                List<string> response = SplitIntoWords(Console.ReadLine().ToLower());
+                foreach (GameAction action in player.actions)
+                {
+                    action.actionMethod(player, response);
+                    if (foundAction) break;
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nPress Enter to Continue: ");
+            Console.ReadLine();
+        }
+
         static List<string> SplitIntoWords(string sentence)
         {
             List<string> returnList = new List<string>();
@@ -781,6 +870,24 @@ namespace DungeonsAndDumbDumbs
                 }
             }
             return returnList;
+        }
+
+        public static int SortInventory(Equipment x, Equipment y)
+        {
+            if (x == y)
+            {
+                return 0;
+            }
+            List<string> names = new List<string>();
+            names.Add(x.equipmentName);
+            names.Add(y.equipmentName);
+            names.Sort();
+            foreach (string name in names)
+            {
+                if (name == x.equipmentName) return -1;
+                else return 1;
+            }
+            return 69;
         }
 
         public static void AddAbilityScore(LivingCreature creature, string ability, int score)

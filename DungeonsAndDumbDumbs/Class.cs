@@ -197,7 +197,7 @@ namespace DungeonsAndDumbDumbs
     }
     class Bard : Class
     {
-        public int inspirationDie = 6;
+        public int inspirationDice = 6;
         public Bard()
         {
             className = "Bard";
@@ -206,6 +206,9 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
+            Program.player.firstLevelSlots = 2;
+            Program.player.firstLevelSlotsRemaining = Program.player.firstLevelSlots;
+            Program.player.canRitual = true;
             Program.AddProficiency(Program.player, "Light Armour");
             Program.AddProficiency(Program.player, "Simple Weapons");
             Program.AddProficiency(Program.player, "Hand Crossbows");
@@ -379,6 +382,9 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
+            Program.player.firstLevelSlots = 2;
+            Program.player.firstLevelSlotsRemaining = Program.player.firstLevelSlots;
+            Program.player.canRitual = true;
             Program.AddProficiency(Program.player, "Light Armour");
             Program.AddProficiency(Program.player, "Medium Armour");
             Program.AddProficiency(Program.player, "Heavy Armour");
@@ -578,6 +584,9 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
+            Program.player.firstLevelSlots = 2;
+            Program.player.firstLevelSlotsRemaining = Program.player.firstLevelSlots;
+            Program.player.canRitual = true;
             Program.player.languages.Add(Program.Language.DRUIDIC);
             Program.AddProficiency(Program.player, "Light Armour");
             Program.AddProficiency(Program.player, "Medium Armour");
@@ -1276,6 +1285,8 @@ namespace DungeonsAndDumbDumbs
     }
     class Ranger : Class
     {
+        public List<Monster.Type> favouredEnemies = new List<Monster.Type>();
+        public List<Program.Terrain> favouredTerrain = new List<Program.Terrain>();
         public Ranger()
         {
             className = "Ranger";
@@ -1329,6 +1340,44 @@ namespace DungeonsAndDumbDumbs
                         allowedSkills.Remove(skill);
                         selectedSkills++;
                         break;
+                    }
+                }
+            }
+            while (favouredEnemies.Count == 0)
+            {
+                Console.Clear();
+                foreach (Monster.Type monsterType in Monster.allMonsterTypes)
+                {
+                    Console.WriteLine(Program.GetDescription(monsterType));
+                }
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nWhich monster type do you wish to be best at fighting?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                string choice = Console.ReadLine().ToLower();
+                foreach (Monster.Type monsterType in Monster.allMonsterTypes)
+                {
+                    if (choice == Program.GetDescription(monsterType).ToLower())
+                    {
+                        favouredEnemies.Add(monsterType);
+                    }
+                }
+            }
+            while (favouredTerrain.Count == 0)
+            {
+                Console.Clear();
+                foreach (Program.Terrain terrain in Program.naturalTerrain)
+                {
+                    Console.WriteLine(Program.GetDescription(terrain));
+                }
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("\nWhich terrain will you be most suited to?: ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                string choice = Console.ReadLine().ToLower();
+                foreach (Program.Terrain terrain in Program.naturalTerrain)
+                {
+                    if (choice == Program.GetDescription(terrain).ToLower())
+                    {
+                        favouredTerrain.Add(terrain);
                     }
                 }
             }
@@ -1616,6 +1665,8 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
+            Program.player.firstLevelSlots = 2;
+            Program.player.firstLevelSlotsRemaining = Program.player.firstLevelSlots;
             Program.AddProficiency(Program.player, "Daggers");
             Program.AddProficiency(Program.player, "Darts");
             Program.AddProficiency(Program.player, "Slings");
@@ -1819,6 +1870,8 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
+            Program.player.firstLevelSlots = 1;
+            Program.player.firstLevelSlotsRemaining = Program.player.firstLevelSlots;
             Program.AddProficiency(Program.player, "Light Armour");
             Program.AddProficiency(Program.player, "Simple Weapons");
             Program.AddProficiency(Program.player, "Wisdom");
@@ -2014,6 +2067,9 @@ namespace DungeonsAndDumbDumbs
         }
         public override void PlayerCreation()
         {
+            Program.player.firstLevelSlots = 2;
+            Program.player.firstLevelSlotsRemaining = Program.player.firstLevelSlots;
+            Program.player.canRitual = true;
             Program.AddProficiency(Program.player, "Daggers");
             Program.AddProficiency(Program.player, "Darts");
             Program.AddProficiency(Program.player, "Slings");

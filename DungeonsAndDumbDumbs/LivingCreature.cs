@@ -16,9 +16,30 @@ namespace DungeonsAndDumbDumbs
         public List<Program.Language> languages = new List<Program.Language>();
         public List<Spell> cantrips = new List<Spell>();
         public List<Spell> knownSpells = new List<Spell>();
+        public bool canRitual = false;
+        public int firstLevelSlots = 0;
+        public int secondLevelSlots = 0;
+        public int thirdLevelSlots = 0;
+        public int fourthLevelSlots = 0;
+        public int fifthLevelSlots = 0;
+        public int sixthLevelSlots = 0;
+        public int seventhLevelSlots = 0;
+        public int eighthLevelSlots = 0;
+        public int ninthLevelSlots = 0;
+        public int firstLevelSlotsRemaining = 0;
+        public int secondLevelSlotsRemaining = 0;
+        public int thirdLevelSlotsRemaining = 0;
+        public int fourthLevelSlotsRemaining = 0;
+        public int fifthLevelSlotsRemaining = 0;
+        public int sixthLevelSlotsRemaining = 0;
+        public int seventhLevelSlotsRemaining = 0;
+        public int eighthLevelSlotsRemaining = 0;
+        public int ninthLevelSlotsRemaining = 0;
+        public bool usedSpellThisAction = false;
         public List<string> proficiencies = new List<string>();
         public int proficiencyBonus;
         public List<GameAction> actions = new List<GameAction>();
+        public List<GameAction> bonusActions = new List<GameAction>();
         public List<Program.DamageType> immunities = new List<Program.DamageType>();
         public List<Program.DamageType> resistances = new List<Program.DamageType>();
         public List<Program.DamageType> vunerabilities = new List<Program.DamageType>();
@@ -34,6 +55,10 @@ namespace DungeonsAndDumbDumbs
         public int tempHitPoints;
         public Location currentLocation;
         public Tuple<int, int> position;
+        public LivingCreature(List<GameAction> startActions)
+        {
+            actions = startActions;
+        }
     }
     class PeacefulCreature : LivingCreature
     {
@@ -46,7 +71,7 @@ namespace DungeonsAndDumbDumbs
         public List<Equipment> inventory = new List<Equipment>();
         public Armour wornArmour;
         public bool hasShield = false;
-        public PeacefulCreature()
+        public PeacefulCreature(List<GameAction> startActions) : base(startActions)
         {
             languages.Add(Program.Language.COMMON);
         }
@@ -71,9 +96,12 @@ namespace DungeonsAndDumbDumbs
     }
     class Player : PeacefulCreature
     {
-        public Player()
+        public Player(List<GameAction> startActions) : base(startActions)
         {
             proficiencyBonus = 2;
+            bonusActions.Add(Program.useMagic);
+            bonusActions.Add(Program.showInventory);
+            bonusActions.Add(Program.showCharacterSheet);
         }
         public void ShowCharacterSheet() // TODO: Add Senses
         {
@@ -86,7 +114,7 @@ namespace DungeonsAndDumbDumbs
                 $"| Intelligence: {intelligenceScore} ({Program.GetAbilityModifier(this, "Intelligence")}) | Wisdom: {wisdomScore} ({Program.GetAbilityModifier(this, "Wisdom")}) " +
                 $"| Charisma: {charismaScore} ({Program.GetAbilityModifier(this, "Charisma")})\n");
             Console.WriteLine($"Proficiency Bonus: +{proficiencyBonus} | Walking Speed: {walkSpeed}ft. | Armour Class: {CalculateArmourClass()} | {inspired}.\n");
-            Console.WriteLine($"Hit Points: {currentHitPoints} / {maxHitPoints} | Currency: {gold}gp, {silver}sp, {copper}cp\n");
+            Console.WriteLine($"Hit Points: {currentHitPoints} / {maxHitPoints} | Currency: {gold} gold, {silver} silver, {copper} copper\n");
             Console.WriteLine($"Saving Throw Modifiers: Strength: {Program.GetSavingThrowModifier(this, "Strength")} | Dexterity: {Program.GetSavingThrowModifier(this, "Dexterity")} | " +
                 $"Constitution: {Program.GetSavingThrowModifier(this, "Constitution")} | Intelligence: {Program.GetSavingThrowModifier(this, "Intelligence")} | " +
                 $"Wisdom: {Program.GetSavingThrowModifier(this, "Wisdom")} | Charisma: {Program.GetSavingThrowModifier(this, "Charisma")}\n");
@@ -111,14 +139,11 @@ namespace DungeonsAndDumbDumbs
             {
                 Console.WriteLine(Program.GetDescription(language));
             }
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPress Enter to Continue: ");
-            Console.ReadLine();
         }
     }
     class NPC : PeacefulCreature
     {
-        public NPC(string characterName)
+        public NPC(string characterName, List<GameAction> startActions) : base(startActions)
         {
             name = characterName;
         }
@@ -141,12 +166,47 @@ namespace DungeonsAndDumbDumbs
             GARGANTUAN
         }
         public Size monsterSize;
+        public enum Type
+        {
+            [Description("Aberration")]
+            ABBERATION,
+            [Description("Beast")]
+            BEAST,
+            [Description("Celestial")]
+            CELESTIAL,
+            [Description("Construct")]
+            CONSTRUCT,
+            [Description("Dragon")]
+            DRAGON,
+            [Description("Elemental")]
+            ELEMENTAL,
+            [Description("Fey")]
+            FEY,
+            [Description("Fiend")]
+            FIEND,
+            [Description("Giant")]
+            GIANT,
+            [Description("Humanoid")]
+            HUMANOID,
+            [Description("Monstrosity")]
+            MONSTROSITY,
+            [Description("Ooze")]
+            OOZE,
+            [Description("Plant")]
+            PLANT,
+            [Description("Undead")]
+            UNDEAD,
+        }
+        public static List<Type> allMonsterTypes = new List<Type>() { Type.ABBERATION, Type.BEAST, Type.CELESTIAL, Type.CONSTRUCT, Type.DRAGON, Type.ELEMENTAL, Type.FEY, Type.FIEND, Type.GIANT, 
+            Type.MONSTROSITY, Type.OOZE, Type.PLANT, Type.UNDEAD };
+        public Type monsterType;
         public int armourClass;
         public int challengeRating;
-        public Monster(string monsterName, Size size, int speed, int challenge, int xpWhenDefeated, int armour)
+        public Monster(string monsterName, Size size, Type type, int speed, int challenge, int xpWhenDefeated, int armour, List<GameAction> startActions) : base(startActions)
         {
             name = monsterName;
             monsterSize = size;
+            monsterType = type;
             walkSpeed = speed;
             challengeRating = challenge;
             experiencePoints = xpWhenDefeated;
