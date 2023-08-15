@@ -43,7 +43,7 @@ namespace DungeonsAndDumbDumbs
         public List<Program.DamageType> immunities = new List<Program.DamageType>();
         public List<Program.DamageType> resistances = new List<Program.DamageType>();
         public List<Program.DamageType> vunerabilities = new List<Program.DamageType>();
-        // TODO: Effects
+        public List<EffectInstance> activeEffects = new List<EffectInstance>();
         public int strengthScore = 0;
         public int dexterityScore = 0;
         public int constitutionScore = 0;
@@ -58,6 +58,13 @@ namespace DungeonsAndDumbDumbs
         public LivingCreature(List<GameAction> startActions)
         {
             actions = startActions;
+        }
+        public virtual void OnTimePassed(object sender, TimePassedEventArgs data)
+        {
+            foreach (EffectInstance effect in activeEffects)
+            {
+                if (!effect.isIndefinite) effect.effectDuration -= data.minutesPassed;
+            }
         }
     }
     class PeacefulCreature : LivingCreature
@@ -81,9 +88,17 @@ namespace DungeonsAndDumbDumbs
             if (hasShield) shieldAC += Program.shield.baseArmourClass;
             if (wornArmour != null)
             {
+                if (characterClass is Fighter)
+                {
+                    Fighter character = (Fighter)characterClass;
+                    if (character.fightingStyle == Fighter.FightingStyle.DEFENSE)
+                    {
+                        return shieldAC + wornArmour.CalculateArmourClass(this) + 2;
+                    }
+                }
                 return shieldAC + wornArmour.CalculateArmourClass(this);
             }
-            return shieldAC + characterClass.CalculateArmourClass();
+            return shieldAC + characterClass.CalculateArmourClass(this);
         }
         public Tuple<int, int> CalculateHitDice()
         {
@@ -91,7 +106,11 @@ namespace DungeonsAndDumbDumbs
         }
         public int CalculateHitPoints()
         {
-            return characterClass.CalculateHitPoints();
+            return characterClass.CalculateHitPoints(this);
+        }
+        public override void OnTimePassed(object sender, TimePassedEventArgs data)
+        {
+            base.OnTimePassed(sender, data);
         }
     }
     class Player : PeacefulCreature
@@ -140,12 +159,20 @@ namespace DungeonsAndDumbDumbs
                 Console.WriteLine(Program.GetDescription(language));
             }
         }
+        public override void OnTimePassed(object sender, TimePassedEventArgs data)
+        {
+            base.OnTimePassed(sender, data);
+        }
     }
     class NPC : PeacefulCreature
     {
         public NPC(string characterName, List<GameAction> startActions) : base(startActions)
         {
             name = characterName;
+        }
+        public override void OnTimePassed(object sender, TimePassedEventArgs data)
+        {
+            base.OnTimePassed(sender, data);
         }
     }
     class Monster : LivingCreature
@@ -202,8 +229,10 @@ namespace DungeonsAndDumbDumbs
         public Type monsterType;
         public int armourClass;
         public int challengeRating;
-        public Monster(string monsterName, Size size, Type type, int speed, int challenge, int xpWhenDefeated, int armour, List<GameAction> startActions) : base(startActions)
+        public Monster(string monsterName, Size size, int hitPoints, Type type, int speed, int challenge, int xpWhenDefeated, int armour, List<GameAction> startActions) : base(startActions)
         {
+            maxHitPoints = hitPoints;
+            currentHitPoints = hitPoints;
             name = monsterName;
             monsterSize = size;
             monsterType = type;
@@ -215,6 +244,10 @@ namespace DungeonsAndDumbDumbs
         public int CalculateArmourClass()
         {
             return armourClass;
+        }
+        public override void OnTimePassed(object sender, TimePassedEventArgs data)
+        {
+            base.OnTimePassed(sender, data);
         }
     }
 }

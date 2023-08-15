@@ -5,17 +5,30 @@ using System.Reflection;
 
 namespace DungeonsAndDumbDumbs
 {
+    class TimePassedEventArgs : EventArgs
+    {
+        public float minutesPassed { get; set; }
+    }
     class Program
     {
         // Colour Code: Good - Green, Bad - Red, Game Info - Yellow, Player Input and Options - Blue, Prompt - Cyan, Incorrect Response - Magenta
         // Meta Game Variables:
+        public static event EventHandler<TimePassedEventArgs> TimePassed;
+        public static void OnTimePassed(float minutesToPass)
+        {
+            TimePassedEventArgs eventData = new TimePassedEventArgs
+            {
+                minutesPassed = minutesToPass
+            };
+            TimePassed?.Invoke(Program.player, eventData);
+        }
         public static Random RNG = new Random();
         public static Dictionary<int, int> scoreToModifier = new Dictionary<int, int>() { { 1, -5 }, { 2, -4 }, { 3, -4 }, { 4, -3 }, { 5, -3 }, { 6, -2 }, { 7, -2 }, { 8, -1 }, { 9, -1 }, 
             { 10, 0 }, { 11, 0 }, { 12, 1 }, { 13, 1 }, { 14, 2 }, { 15, 2 }, { 16, 3 }, { 17, 3 }, { 18, 4 }, { 19, 4 }, { 20, 5 }, { 21, 5 }, { 22, 6 }, { 23, 6 }, { 24, 7 }, { 25, 7 }, 
             { 26, 8 }, { 27, 8 }, { 28, 9 }, { 29, 9 }, { 30, 10 } };
         public static Dictionary<int, int> leveltoXP = new Dictionary<int, int>() { { 2, 300 }, { 3, 900 }, { 4, 2700 }, { 5, 6500 }, { 6, 14000 }, { 7, 23000 }, { 8, 34000 }, { 9, 48000 }, 
             { 10, 64000 }, {11, 85000 }, { 12, 100000 }, { 13, 120000 }, { 14, 140000 }, { 15, 165000 }, { 16, 195000 }, { 17, 225000 }, { 18, 265000 }, { 19, 305000 }, { 20, 355000 } };
-        public static List<string> confirmations = new List<string>() { "yes", "yep", "ok", "sure", "alright", "yeah", "y" };
+        public static List<string> confirmations = new List<string>() { "yes", "yep", "ok", "sure", "alright", "yeah", "y", "indeed" };
         public static List<Tuple<string, Type>> allRaces = new List<Tuple<string, Type>>() { new Tuple<string, Type>("Dragonborn", typeof(Dragonborn)), 
             new Tuple<string, Type>("Hill Dwarf", typeof(HillDwarf)), new Tuple<string, Type>("Mountain Dwarf", typeof(MountainDwarf)), new Tuple<string, Type>("High Elf", typeof(HighElf)),
             new Tuple<string, Type>("Wood Elf", typeof(WoodElf)), new Tuple<string, Type>("Rock Gnome", typeof(RockGnome)), new Tuple<string, Type>("Half-Elf", typeof(HalfElf)),
@@ -105,6 +118,11 @@ namespace DungeonsAndDumbDumbs
             COMBAT,
             INTERACTION,
             FREE
+        }
+        public enum Effect
+        {
+            [Description("Blindness")]
+            BLIND
         }
         public enum DamageType
         {
@@ -779,17 +797,39 @@ namespace DungeonsAndDumbDumbs
             Console.Write("\nPress Enter to Continue: ");
             Console.ReadLine();
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string classSpecificText;
+            if (player.characterClass is Barbarian || player.characterClass is Fighter || player.characterClass is Paladin || player.characterClass is Rogue)
+            {
+                classSpecificText = "Luckily, you seem the sort to be able to handle some of the brutes we find our justice systems struggling with.";
+            } else if (player.characterClass is Ranger)
+            {
+                classSpecificText = "It seems you'll fit right in as you seem great at keeping some of the foul creatures at bay.";
+            } else if (player.characterClass is Monk) 
+            {
+                classSpecificText = "Being level headed as you are, it is possible that you might not even have any problem with the situation as you'd be just fine.";
+            } else
+            {
+                classSpecificText = "Although come to think of it, he was also a magic wielder which may cause people to hope you can rise to the occasion.";
+            }
+            Console.WriteLine("Welcome to Wickfordonia!\n\nHome to various brilliant species and races, we pride ourselves in being a diverse community with a variety of different backgrounds.\n" +
+                $"It's a shame you join us at this time because it's only been 2 months since we lost our protector TheBeastBoss, and we are certainly feeling his absence.\n{classSpecificText}\n" +
+                $"I cam imagine you must be quite tired from the journey here, I'll advise that you head down to the town hall and get yourself acquainted with the Mayor.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nPress Enter to Continue: ");
+            Console.ReadLine();
+
+            Console.ReadLine();
         }
 
-        static string FormatName(string name)
+        static string FormatName(string startName, bool askUser = true)
         {
-            string startName = name;
-            name = name.ToLower();
+            startName = startName.ToLower();
             string returnName = "";
             bool canCapital = true;
-            for (int i = 0; i < name.Length; i++)
+            for (int i = 0; i < startName.Length; i++)
             {
-                char c = name[i];
+                char c = startName[i];
                 if (canCapital)
                 {
                     returnName += c.ToString().ToUpper();
@@ -803,17 +843,21 @@ namespace DungeonsAndDumbDumbs
                     }
                 }
             }
-            if (returnName == startName)
+            if (askUser)
             {
+                if (returnName == startName)
+                {
+                    return startName;
+                }
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"Do you want the name to be formatted from \"{startName}\" to \"{returnName}\"?: ");
+                if (CheckConfirmation())
+                {
+                    return returnName;
+                }
                 return startName;
             }
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write($"Do you want the name to be formatted from \"{startName}\" to \"{returnName}\"?: ");
-            if (CheckConfirmation())
-            {
-                return returnName;
-            }
-            return startName;
+            return returnName;
         }
 
         public static bool CheckConfirmation()
@@ -1037,19 +1081,15 @@ namespace DungeonsAndDumbDumbs
         public static string GetDescription(Enum en)
         {
             Type type = en.GetType();
-
             MemberInfo[] memInfo = type.GetMember(en.ToString()); // haha, "GetMember" lmao
-
             if (memInfo != null && memInfo.Length > 0)
             {
                 object[] attrs = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-
                 if (attrs != null && attrs.Length > 0)
                 {
                     return ((DescriptionAttribute)attrs[0]).Description;
                 }
             }
-
             return en.ToString();
         }
     }

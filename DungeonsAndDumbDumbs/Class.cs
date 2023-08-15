@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DungeonsAndDumbDumbs
 {
@@ -11,35 +9,32 @@ namespace DungeonsAndDumbDumbs
     {
         public string className;
         public string primaryAbility;
-        public int diceRollLastLevel;
         public string classDescription;
         public int classLevel = 1;
-        public virtual void PlayerCreation()
-        {
-
-        }
+        public virtual void PlayerCreation() { }
+        public virtual void NPCCreation(PeacefulCreature creature) { }
         public virtual Tuple<int, int> CalculateHitDice()
         {
             return new Tuple<int, int>(classLevel, 8);
         }
-        public virtual int CalculateHitPoints()
+        public virtual int CalculateHitPoints(PeacefulCreature creature, int baseValue = 8)
         {
             if (classLevel == 1)
             {
-                return 8 + Program.GetAbilityModifier(Program.player, "Constitution");
+                return baseValue + Program.GetAbilityModifier(creature, "Constitution");
             }
             else
             {
-                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
+                return Math.Max(Program.RollDice(false, new Tuple<int, int>(1, baseValue)).Sum() + Program.GetAbilityModifier(creature, "Constitution"), 1);
             }
         }
-        public virtual int CalculateArmourClass()
+        public virtual int CalculateArmourClass(PeacefulCreature creature)
         {
-            return 10 + Program.GetAbilityModifier(Program.player, "Dexterity");
+            return 10 + Program.GetAbilityModifier(creature, "Dexterity");
         }
-        public virtual void IncreaseLevel(int diceSize = 8)
+        public virtual void IncreaseLevel(PeacefulCreature creature)
         {
-            diceRollLastLevel = Program.RollDice(false, new Tuple<int, int>(1, diceSize)).First();
+            
         }
     }
     class Barbarian : Class
@@ -180,24 +175,18 @@ namespace DungeonsAndDumbDumbs
         {
             return new Tuple<int, int>(classLevel, 12);
         }
-        public override int CalculateHitPoints()
+        public override int CalculateHitPoints(PeacefulCreature creature, int baseValue = 12)
         {
-            if (classLevel == 1)
-            {
-                return 12 + Program.GetAbilityModifier(Program.player, "Constitution");
-            } else
-            {
-                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
-            }
+            return base.CalculateHitPoints(creature, baseValue);
         }
-        public override int CalculateArmourClass()
+        public override int CalculateArmourClass(PeacefulCreature creature)
         {
-            return 10 + Program.GetAbilityModifier(Program.player, "Constitution") + Program.GetAbilityModifier(Program.player, "Dexterity"); // TODO: Only when not wearing any armour
+            return 10 + Program.GetAbilityModifier(creature, "Constitution") + Program.GetAbilityModifier(creature, "Dexterity");
         }
     }
     class Bard : Class
     {
-        public int inspirationDice = 6;
+        public Tuple<int, int> inspirationDice = new Tuple<int, int>(1, 6);
         public Bard()
         {
             className = "Bard";
@@ -806,22 +795,16 @@ namespace DungeonsAndDumbDumbs
         public Fighter()
         {
             className = "Fighter";
+            primaryAbility = "Strength";
             classDescription = "A master of martial combat, skilled with a variety of weapons and armor.";
         }
         public override Tuple<int, int> CalculateHitDice()
         {
             return new Tuple<int, int>(classLevel, 10);
         }
-        public override int CalculateHitPoints()
+        public override int CalculateHitPoints(PeacefulCreature creature, int baseValue = 10)
         {
-            if (classLevel == 1)
-            {
-                return 10 + Program.GetAbilityModifier(Program.player, "Constitution");
-            }
-            else
-            {
-                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
-            }
+            return base.CalculateHitPoints(creature, baseValue);
         }
         public override void PlayerCreation()
         {
@@ -998,9 +981,9 @@ namespace DungeonsAndDumbDumbs
             classDescription = "A master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection.";
             primaryAbility = "Dexterity";
         }
-        public override int CalculateArmourClass()
+        public override int CalculateArmourClass(PeacefulCreature creature)
         {
-            return 10 + Program.GetAbilityModifier(Program.player, "Dexterity") + Program.GetAbilityModifier(Program.player, "Wisdom"); // TODO: Only while not wearing armour or sheild
+            return 10 + Program.GetAbilityModifier(creature, "Dexterity") + (creature.hasShield ? 0 : Program.GetAbilityModifier(creature, "Wisdom"));
         }
         public override void PlayerCreation()
         {
@@ -1141,16 +1124,9 @@ namespace DungeonsAndDumbDumbs
         {
             return new Tuple<int, int>(classLevel, 10);
         }
-        public override int CalculateHitPoints()
+        public override int CalculateHitPoints(PeacefulCreature creature, int baseValue = 10)
         {
-            if (classLevel == 1)
-            {
-                return 10 + Program.GetAbilityModifier(Program.player, "Constitution");
-            }
-            else
-            {
-                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
-            }
+            return CalculateHitPoints(creature, baseValue);
         }
         public override void PlayerCreation()
         {
@@ -1297,16 +1273,9 @@ namespace DungeonsAndDumbDumbs
         {
             return new Tuple<int, int>(classLevel, 10);
         }
-        public override int CalculateHitPoints()
+        public override int CalculateHitPoints(PeacefulCreature creature, int baseValue = 10)
         {
-            if (classLevel == 1)
-            {
-                return 10 + Program.GetAbilityModifier(Program.player, "Constitution");
-            }
-            else
-            {
-                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
-            }
+            return base.CalculateHitPoints(creature, baseValue);
         }
         public override void PlayerCreation()
         {
@@ -1648,20 +1617,13 @@ namespace DungeonsAndDumbDumbs
         {
             return new Tuple<int, int>(classLevel, 6);
         }
-        public override int CalculateHitPoints()
+        public override int CalculateHitPoints(PeacefulCreature creature, int baseValue = 7)
         {
-            if (classLevel == 1)
-            {
-                return 7 + Program.GetAbilityModifier(Program.player, "Constitution");
-            }
-            else
-            {
-                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1)) + classLevel;
-            }
+            return base.CalculateHitPoints(creature, baseValue);
         }
-        public override int CalculateArmourClass()
+        public override int CalculateArmourClass(PeacefulCreature creature)
         {
-            return 13 + Program.GetAbilityModifier(Program.player, "Dexterity"); // TODO: Not when wearing armour
+            return 13 + Program.GetAbilityModifier(Program.player, "Dexterity");
         }
         public override void PlayerCreation()
         {
@@ -2221,16 +2183,9 @@ namespace DungeonsAndDumbDumbs
         {
             return new Tuple<int, int>(classLevel, 6);
         }
-        public override int CalculateHitPoints()
+        public override int CalculateHitPoints(PeacefulCreature creature, int baseValue = 6)
         {
-            if (classLevel == 1)
-            {
-                return 6 + Program.GetAbilityModifier(Program.player, "Constitution");
-            }
-            else
-            {
-                return diceRollLastLevel + (Program.GetAbilityModifier(Program.player, "Constitution") * (classLevel - 1));
-            }
+            return base.CalculateHitPoints(creature, baseValue);
         }
     }
 }

@@ -10,12 +10,22 @@ namespace DungeonsAndDumbDumbs
     {
         public class Square // 5ft Square
         {
+            public enum Lighting
+            {
+                LIGHT,
+                DIMLIGHT,
+                DARKNESS
+            }
             public bool isDifficultTerrain;
             public bool hasSpace;
+            public int fallHeight;
+            public Lighting lighting;
             public Program.Terrain terrainType;
             public Weapon thrownWeapon = null;
-            public Square(bool space = false, Program.Terrain type = Program.Terrain.INSIDE, bool terrain = false)
+            public Square(Lighting light = Lighting.LIGHT, bool space = false, Program.Terrain type = Program.Terrain.INSIDE, bool terrain = false, int falling = 0)
             {
+                lighting = light;
+                fallHeight = falling;
                 isDifficultTerrain = terrain;
                 terrainType = type;
                 hasSpace = space;
